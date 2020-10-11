@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Index
+{% endblock %}
+
+{% block main %}
+
+<h3>Holdings</h3><br />
+
+<table class="center">
+    <tr>
+      <th>Company</th>
+      <th>Number</th>
+      <th>Price</th>
+      <th>Total</th>
+    </tr>
+    {% for stock in stocks %}
+    <tr>
+      <td>{{ stock["symbol"] }}</td>
+      <td>{{ stock["number"] }}</td>
+      <td>${{ price[stock["symbol"]] }}</td>
+      <td>${{ price[stock["symbol"]] * stock["number"] }}</td>
+    </tr>
+    {% endfor %}
+</table> <br />
+<p>Your remaining cash balance: ${{ cash }}</p>
+<p>Your total wealth: ${{ wealth }}</p>
+
+{% endblock %}
