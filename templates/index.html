@@ -6,7 +6,19 @@
 
 {% block main %}
 
-<h3>Holdings</h3><br />
+<form action="/" method="post">
+    <div class="form-group">
+        <input autocomplete="off" autofocus class="form-control" name="symbol" placeholder="Stock Symbol" type="text">
+        &nbsp;<input name="submit" value="Look up" type="submit">
+    </div>
+</form>
+{% if method=="POST" %}
+    <p>The stock price of <strong>{{ quote['name'] }}</strong> is <strong>${{ quote['price'] }}</strong>.</p>
+{% endif %}
+<br />
+<hr>
+<br />
+<h3>Your Holdings</h3><br />
 
 <table class="center">
     <tr>

@@ -3,6 +3,7 @@
 import os
 from cs50 import SQL
 from flask import Flask, flash, jsonify, redirect, render_template, request, session
+from flask_socketio import SocketIO, send, emit
 from flask_session import Session
 from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
@@ -34,6 +35,11 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
+# Secret key for chat
+app.config["SECRET_KEY"] = "secretkey"
+# SocketIO
+socketio = SocketIO(app)
+
 # Configure CS50 Library to use SQLite database
 db = SQL("sqlite:///finance.db")
 
@@ -42,7 +48,7 @@ if not os.environ.get("API_KEY"):
     raise RuntimeError("API_KEY not set")
 
 
-@app.route("/")
+@app.route("/", methods=["GET", "POST"])
 @login_required
 def index():
     """Show portfolio of stocks"""
@@ -56,7 +62,20 @@ def index():
     db.execute("UPDATE users SET wealth = :wealth WHERE id = :id", wealth=wealth, id = session["user_id"])
     cash = "{:.2f}".format(user_id_info[0]['cash'])
     wealth = "{:.2f}".format(wealth)
-    return render_template("index.html", stocks=stocks, price=price, cash = cash, wealth = wealth)
+    """Get stock quote."""
+    method = request.method
+    if method == "GET":
+        return render_template("index.html", method=method, stocks=stocks, price=price, cash = cash, wealth = wealth)
+    elif method == "POST":
+        symbol = request.form.get("symbol")
+        if not symbol:
+            return apology("You must provide a symbol")
+        quote = lookup(symbol)
+        if quote != None:
+            return render_template("index.html", method=method, quote=quote, stocks=stocks, price=price, cash = cash, wealth = wealth)
+        else:
+            apology_message = symbol + " is an invalid symbol"
+            return apology(apology_message)
 
 @app.route("/buy", methods=["GET", "POST"])
 @login_required
@@ -142,23 +161,6 @@ def logout():
     # Redirect user to login form
     return redirect("/")
 
-@app.route("/quote", methods=["GET", "POST"])
-@login_required
-def quote():
-    """Get stock quote."""
-    if request.method == "GET":
-        return render_template("quote.html", method="GET")
-    elif request.method == "POST":
-        symbol = request.form.get("symbol")
-        if not symbol:
-            return apology("You must provide a sumbol")
-        quote = lookup(symbol)
-        if quote != None:
-            return render_template("quote.html", method="POST", quote=quote)
-        else:
-            apology_message = symbol + " is an invalid symbol"
-            return apology(apology_message)
-
 @app.route("/register", methods=["GET", "POST"])
 def register():
     # User reached route via GET (as by clicking a link or via redirect)
@@ -222,6 +224,45 @@ def sell():
     else:
         pass
 
+@app.route("/connect", methods=["GET", "POST"])
+@login_required
+def connect():
+    if request.method == "GET":
+        return render_template("connect.html", method="GET")
+    elif request.method == "POST":
+        search_string = request.form.get("username")
+        matches = db.execute("SELECT username, bio FROM users WHERE id!=:user_id", user_id=session["user_id"])
+        results = []
+        for match in matches:
+            if match["username"] == search_string:
+                results.append(match)
+        return render_template("connect.html", method="POST", results=results)
+    else:
+        return apology("Unknown method")
+
+@app.route("/profile", methods=["GET"])
+@login_required
+def profile():
+    user_id_info = db.execute("SELECT * FROM users WHERE id = :id", id = session["user_id"])
+    if request.method == "GET":
+        return render_template("profile.html", username=user_id_info[0]['username'], bio=user_id_info[0]['bio'])
+    else:
+        return apology("Unknown method")
+
+@app.route("/chat", methods=["GET", "POST"])
+#@login_required
+def chat():
+    return render_template("chat.html")
+
+@socketio.on('connect', namespace='/chat')
+def handle_connect(response):
+    print("Response:", response)
+
+@socketio.on('message', namespace='/chat')
+def handle_message(sid, message):
+    print("Socket:", sid, "Message:", message)
+    send(message, namespace='/chat', broadcast=True)
+
 def errorhandler(e):
     """Handle error"""
     if not isinstance(e, HTTPException):
@@ -233,4 +274,4 @@ for code in default_exceptions:
     app.errorhandler(code)(errorhandler)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    socketio.run(app, debug=True)

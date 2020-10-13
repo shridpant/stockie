@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Index
+{% endblock %}
+
+{% block main %}
+
+<form role="search" action="/connect" method="post">
+    <div class="form-group">
+        <input autocomplete="off" autofocus class="form-control" name="username" placeholder="Username" type="text">
+        &nbsp;<input type="submit" name="submit" value="Search">
+    </div>
+</form><br />
+{% if method == "POST" %}
+        <dl class="center">
+            {% for result in results %}
+                <dt>{{ result["username"] }}</dt>
+                <dd>- {{ result["bio"] }}</dd>
+            {% endfor %}
+        </dl>
+{% endif %}
+
+
+{% endblock %}
