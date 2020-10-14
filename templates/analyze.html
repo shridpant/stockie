@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Index
+{% endblock %}
+
+{% block main %}
+
+<form role="search" action="/analyze" method="post">
+    <div class="form-group">
+        <input autocomplete="off" autofocus class="form-control" name="phrase" placeholder="Search Phrase" type="text">
+        &nbsp;<input type="submit" name="submit" value="Search">
+    </div>
+</form>
+{% if method == "POST" %}
+    <br /><hr><br />
+    <h3>Results</h3><br />
+        <dl class="center">
+            {% for result in results %}
+                <dt>{{ result[1] }}</dt>
+                {% if result[0] > 0.0 %}
+                    <dd><span style="color:green;">"{{ result[2] }}"</span></dd>
+                {% elif result[0] == 0.0 %}
+                    <dd><span style="color:black;">"{{ result[2] }}"</span></dd>
+                {% else %}
+                    <dd><span style="color:red;">"{{ result[2] }}"</span></dd>
+                {% endif %}
+            {% endfor %}
+        </dl>
+{% endif %}
+
+{% endblock %}
+
+{% block footer %}
+<footer class="small text-center text-muted">
+    Data provided for free by <a href="https://developer.twitter.com/en">Twitter</a>. View <a href="https://twitter.com/en/tos">Twitter’s Terms of Service</a>.
+</footer>
+{% endblock %}

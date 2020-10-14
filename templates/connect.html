@@ -11,14 +11,20 @@
         <input autocomplete="off" autofocus class="form-control" name="username" placeholder="Username" type="text">
         &nbsp;<input type="submit" name="submit" value="Search">
     </div>
-</form><br />
+</form>
 {% if method == "POST" %}
+<br /><hr><br />
+    {% if results is defined %}
+        <h3>Results</h3><br />
         <dl class="center">
             {% for result in results %}
                 <dt>{{ result["username"] }}</dt>
                 <dd>- {{ result["bio"] }}</dd>
             {% endfor %}
         </dl>
+    {% else %}
+        <h4>No results found in our database :/</h4>  
+    {% endif %}
 {% endif %}
 
 
