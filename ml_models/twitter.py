@@ -3,12 +3,13 @@ import os
 import sys
 from textblob import TextBlob
 
-def sentiment(api, keyword):
+def sentiment(api, count, keyword):
     collectedTweets = []
-    tweets = api.search(keyword, count=10, tweet_mode = "extended")
+    tweets = api.search(keyword, count=count, tweet_mode = "extended")
     for tweet in tweets:
         blob = TextBlob(tweet.full_text)
-        result = [blob.sentiment.polarity, tweet.user.name, tweet.full_text]
+        tweet_url = "https://twitter.com/" + tweet.user.screen_name + "/status/" + str(tweet.id)
+        result = [blob.sentiment.polarity, tweet.user.name, tweet.full_text, tweet_url]
         collectedTweets.append(result) 
     return collectedTweets     
 

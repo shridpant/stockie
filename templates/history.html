@@ -6,6 +6,7 @@
 
 {% block main %}
 
+{% if history is defined %}
 <h3>Transactions</h3><br />
 
 <table class="center">
@@ -19,17 +20,43 @@
     {% for row in history %}
     <tr>
     <td>{{ row["transaction"] }}</td>
-      <td>{{ row["symbol"] }}</td>
+      <td>
+        {% if row["nature"] == "b" %}
+        <div style="color:green;">
+        {% elif row["nature"] == "s" %}
+        <div style="color:blue;">
+        {% else %}
+          <div>
+        {% endif %}
+        {{ row["symbol"] }}
+        </div>
+      </td>
       <td>{{ row["number"] }}</td>
-      <td>${{ row["price"] }}</td>
+      <td>
+        {% if row["nature"] == "b" %}
+        <div style="color:green;">
+        {% elif row["nature"] == "s" %}
+        <div style="color:blue;">
+        {% else %}
+          <div>
+        {% endif %}
+        ${{ row["price"] }}
+        </div>
+      </td>
       <td>{{ row["timestamp"] }}</td>
     </tr>
     {% endfor %}
-</table>
+</table><br />
+<p class="small text-muted" style="text-align:left;"><u>Legend:</u></p>
+  <div class="box box-green"></div><p class="small text-muted" style="text-align:left;">&nbsp;&nbsp;represents the stocks that were bought</p>
+  <div class="box box-blue"></div><p class="small text-muted" style="text-align:left;">&nbsp;&nbsp;represents the stocks that were sold</p>
+  {% else %}
+<p class="small text-center text-muted">You haven't made any transactions yet. Follow the documentation to <a href="https://github.com/shridpant/stockie" target="_blank">learn more</a>.</p>
+{% endif %}
 {% endblock %}
 
 {% block footer %}
 <footer class="small text-center text-muted">
     Data provided for free by <a href="https://iextrading.com/developer">IEX</a>. View <a href="https://iextrading.com/api-exhibit-a/">IEX’s Terms of Use</a>.
 </footer>
-{% endblock %}
+{% endblock %} 

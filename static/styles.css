@@ -55,4 +55,21 @@ table, th, td {
     padding: 5px;
 
     border-collapse: collapse;
-  }
+}
+
+.box{ 
+    float: left;
+	width:10px; 
+	height:15px; 
+} 
+ 
+.box-red{ 
+	background:#f00; 
+} 
+.box-green{ 
+	background:#0f0; 
+} 
+.box-blue{ 
+	background:#00f; 
+} 
+

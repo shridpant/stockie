@@ -6,7 +6,30 @@
 
 {% block main %}
 
-<h1>Hi, {{ username }}!</h1><br />
-<p><em><span style="font-size:1.5rem;">" </span>{{ bio }}<span style="font-size:1.5rem;"> "</span></em></p>
+<h1>Hi, {{ username }}!</h1>
+{% if bio != None %}
+    <p><em><span style="font-size:1.5rem;">" </span>{{ bio }}<span style="font-size:1.5rem;"> "</span></em></p>
+{% endif %}
+<br /><hr><br />
 
+<form role="search" action="/profile" method="post">
+    <div class="form-group">
+        <input autocomplete="off" autofocus class="form-control" name="username" placeholder="User" type="text">
+        &nbsp;<input type="submit" name="submit" value="Find">
+    </div>
+</form>
+{% if method == "POST" %}
+<br />
+    {% if results is defined %}
+        <dl class="center">
+            {% for result in results %}
+                <dt>{{ result["username"] }}</dt>
+                <dd>- {{ result["bio"] }}</dd>
+            {% endfor %}
+        </dl>
+    {% else %}
+        <p><strong>No results</strong> found in our database :/</p>  
+    {% endif %}
+{% endif %}
+<br />
 {% endblock %}

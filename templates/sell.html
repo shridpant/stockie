@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% block main %}
+{% if stock_list is defined %}
     <form action="/sell" method="post">
         <div class="form-group">
             <select autofocus class="form-control" name="symbol">
@@ -16,6 +17,9 @@
         </div>
         <button class="btn btn-primary" type="submit">Sell</button>
     </form>
+{% else %}
+<p class="small text-center text-muted">You don't own any stocks yet. Follow the documentation to <a href="https://github.com/shridpant/stockie" target="_blank">learn more</a>.</p>
+{% endif %}
 {% endblock %}
 
 {% block footer %}

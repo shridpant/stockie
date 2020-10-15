@@ -1,5 +1,3 @@
-# todo- Cleanup
-
 import os
 from cs50 import SQL
 from flask import Flask, flash, jsonify, redirect, render_template, request, session
@@ -9,15 +7,13 @@ from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from helpers import apology, login_required, lookup, usd
+from helpers import apology, login_required, lookup, usd, getKeys, newsapi
+from ml_models import twitter
 
 # Configure application
 app = Flask(__name__)
-os.environ["API_KEY"] = 'pk_dcf82be1ea1943379f77782df104d6d8'
-
 # Ensure templates are auto-reloaded
 app.config["TEMPLATES_AUTO_RELOAD"] = True
-
 # Ensure responses aren't cached
 @app.after_request
 def after_request(response):
@@ -25,148 +21,199 @@ def after_request(response):
     response.headers["Expires"] = 0
     response.headers["Pragma"] = "no-cache"
     return response
-
 # Custom filter
 app.jinja_env.filters["usd"] = usd
-
 # Configure session to use filesystem (instead of signed cookies)
 app.config["SESSION_FILE_DIR"] = mkdtemp()
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
-
 # Secret key for chat
 app.config["SECRET_KEY"] = "secretkey"
 # SocketIO
 socketio = SocketIO(app)
-
 # Configure CS50 Library to use SQLite database
 db = SQL("sqlite:///finance.db")
-
 # Make sure API key is set
-if not os.environ.get("API_KEY"):
-    raise RuntimeError("API_KEY not set")
+keys = getKeys("key.json")
+# Connect to Twitter
+twitterAPI = twitter.init(keys)
 
+def UserInfo():
+    user_id_info = db.execute("SELECT * FROM users WHERE id = :id", id = session["user_id"])
+    return user_id_info
 
 @app.route("/", methods=["GET", "POST"])
 @login_required
 def index():
-    """Show portfolio of stocks"""
-    user_id_info = db.execute("SELECT username, cash, wealth FROM users WHERE id = :id", id = session["user_id"])
-    stocks = db.execute("SELECT * FROM :username", username=user_id_info[0]['username'])
+    userInfo = UserInfo()[0]
+    # Get Initial Information
+    stocks = db.execute("SELECT * FROM :username", username=userInfo['username'])
     price = {}
-    wealth = user_id_info[0]['cash']
+    wealth = userInfo['cash']
     for stock in stocks:
         price[stock["symbol"]] = lookup(stock["symbol"])['price']
         wealth += price[stock["symbol"]] * stock["number"]
     db.execute("UPDATE users SET wealth = :wealth WHERE id = :id", wealth=wealth, id = session["user_id"])
-    cash = "{:.2f}".format(user_id_info[0]['cash'])
+    cash = "{:.2f}".format(userInfo['cash'])
     wealth = "{:.2f}".format(wealth)
-    """Get stock quote."""
-    method = request.method
-    if method == "GET":
-        return render_template("index.html", method=method, stocks=stocks, price=price, cash = cash, wealth = wealth)
-    elif method == "POST":
+    if request.method == "GET":
+        if not stocks:
+            return render_template("index.html", method="GET", cash = cash, wealth = wealth)
+        else:
+            return render_template("index.html", method="GET", stocks=stocks, price=price, cash = cash, wealth = wealth)
+    else:
         symbol = request.form.get("symbol")
         if not symbol:
             return apology("You must provide a symbol")
         quote = lookup(symbol)
         if quote != None:
-            return render_template("index.html", method=method, quote=quote, stocks=stocks, price=price, cash = cash, wealth = wealth)
+            if not stocks:
+                return render_template("index.html", method="POST", cash = cash, wealth = wealth, quote = quote)
+            else:
+                return render_template("index.html", method="POST", stocks=stocks, price=price, cash = cash, wealth = wealth, quote = quote)
         else:
-            apology_message = symbol + " is an invalid symbol"
-            return apology(apology_message)
+            return apology(symbol + " is an invalid symbol")
+
+@app.route("/insights", methods=["GET", "POST"])
+@login_required
+def insights():
+    if request.method == "GET":
+        return render_template("insights.html", method="GET")
+    else:
+        search_phrase = request.form.get("phrase")
+        if not search_phrase:
+            return apology("You must enter a search phrase")
+        else:
+            #TODO Better analysis methods
+            try:
+                tweetInsights = twitter.sentiment(twitterAPI, 10, search_phrase)
+                newsInsights = newsapi(search_phrase)
+                if len(tweetInsights) == 0 and len(newsInsights) == 0:
+                    return render_template("insights.html", method="POST", search_phrase=search_phrase)
+                elif len(tweetInsights) == 0:
+                    return render_template("insights.html", method="POST", news=newsInsights, search_phrase=search_phrase)
+                elif len(newsInsights) == 0:
+                    return render_template("insights.html", method = "POST", tweets = tweetInsights, search_phrase=search_phrase)
+                else:
+                    return render_template("insights.html", method = "POST", tweets = tweetInsights, news=newsInsights)
+            except Exception as inst:
+                return apology(str(inst))
 
 @app.route("/buy", methods=["GET", "POST"])
 @login_required
 def buy():
-    """Buy shares of stock"""
-    user_id_info = db.execute("SELECT username, cash, wealth FROM users WHERE id = :id", id = session["user_id"])
+    userInfo = UserInfo()[0]
     if request.method == "GET":
         return render_template("buy.html")
-    elif request.method == "POST":
+    else:
         symbol = request.form.get("symbol")
-        number = int(request.form.get("number"))
-        if not symbol:
-            return apology("You must provide a symbol")
+        number = request.form.get("number")
+        if not symbol or not number:
+            return apology("Invalid input")
+        number = int(number)
         quote = lookup(symbol)
         if quote != None:
             cost = float(number) * quote["price"]
-            cash = db.execute("SELECT cash FROM users WHERE id = :id", id = session["user_id"])
-            if cost > cash[0]['cash']:
+            cash = db.execute("SELECT cash FROM users WHERE id = :id", id = session["user_id"])[0]
+            if cost > cash['cash']:
                 return apology("You do not have enough cash")
             else:
-                db.execute("UPDATE users SET cash = :remaining WHERE id = :id", remaining = cash[0]['cash'] - cost, id = session["user_id"])
-                existence = db.execute("SELECT number FROM :username WHERE symbol=:symbol", username=user_id_info[0]['username'], symbol=symbol)
-                # Query database for username
-                username = db.execute("SELECT username FROM users WHERE id = :id", id = session["user_id"])
-                if len(existence) == 0:
-                    db.execute("INSERT INTO :username ('symbol', 'number') VALUES (:symbol, :number)", username=username[0]['username'], symbol = symbol, number = float(number))
-                elif len(existence) == 1:
-                    db.execute("UPDATE :username SET number = :number WHERE symbol = :symbol", username=username[0]['username'], number = number+int(existence[0]['number']), symbol = symbol)
+                db.execute("UPDATE users SET cash = :remaining WHERE id = :id", remaining = cash['cash'] - cost, id = session["user_id"])
+                stockExists = db.execute("SELECT number FROM :username WHERE symbol=:symbol", username=userInfo['username'], symbol=symbol)
+                if len(stockExists) == 0:
+                    db.execute("INSERT INTO :username ('symbol', 'number') VALUES (:symbol, :number)", username=userInfo['username'], symbol = symbol, number = float(number))
                 else:
-                    pass
-                tablename = user_id_info[0]['username'] + "History"
-                db.execute("INSERT INTO :tablename ('symbol','number', 'price') VALUES (:symbol, :number, :price)", tablename=tablename, symbol=symbol, number=number, price=quote['price'])
+                    db.execute("UPDATE :username SET number = :number WHERE symbol = :symbol", username=userInfo['username'], number = (number + int(stockExists[0]['number'])), symbol = symbol)
+                db.execute("INSERT INTO :tablename ('symbol','number', 'price', 'nature') VALUES (:symbol, :number, :price, 'b')", tablename=(userInfo['username'] + "History"), symbol=symbol, number=number, price=quote['price'])
         else:
-            apology_message = symbol + " is an invalid symbol"
-            return apology(apology_message)
+            return apology(symbol + " is an invalid symbol")
         return redirect("/")
+
+@app.route("/sell", methods=["GET", "POST"])
+@login_required
+def sell():
+    userInfo = UserInfo()[0]
+    if request.method == "GET":
+        stock_list = db.execute("SELECT symbol FROM :username", username=userInfo['username'])
+        if len(stock_list) < 1:
+            return render_template("sell.html")
+        else:
+            return render_template("sell.html", stock_list=stock_list)
     else:
-        pass
+        stock = request.form.get("symbol")
+        number = request.form.get("number")
+        number_owned = db.execute("SELECT number FROM :username WHERE symbol=:symbol", username=userInfo['username'], symbol=stock)
+        if not number or len(number_owned) == 0 or int(number) < 0:
+            return apology("Invalid input")
+        elif int(number) > number_owned[0]['number']:
+            return apology("You do not own " + number + " stocks")
+        number = int(number)
+        quote = lookup(stock)
+        cash = quote['price'] * number
+        remaining = number_owned[0]['number'] - number
+        if remaining != 0:
+            db.execute("UPDATE :username SET number=:remaining WHERE symbol=:symbol", username=userInfo['username'], remaining=remaining, symbol=stock)
+        else:
+            db.execute("DELETE FROM :username WHERE symbol=:symbol", username=userInfo['username'], symbol=stock)
+        db.execute("UPDATE users SET cash=:total WHERE username=:username", username=userInfo['username'], total=(cash+userInfo['cash']))
+        db.execute("INSERT INTO :tablename ('symbol','number', 'price', 'nature') VALUES (:symbol, :number, :price, 's')", tablename=(userInfo['username'] + "History"), symbol=stock, number=number, price=quote['price'])
+        return redirect("/")
 
 @app.route("/history")
 @login_required
 def history():
-    """Show history of transactions"""
-    user_id_info = db.execute("SELECT username, cash, wealth FROM users WHERE id = :id", id = session["user_id"])
-    tablename = user_id_info[0]['username'] + "History"
-    history = db.execute("SELECT * FROM :tablename", tablename=tablename)
-    return render_template("history.html", history=history)
+    userInfo = UserInfo()[0]
+    history = db.execute("SELECT * FROM :tablename", tablename=(userInfo['username'] + "History"))
+    if not history:
+        return render_template("history.html")
+    else:
+        return render_template("history.html", history=history)
 
+@app.route("/profile", methods=["GET", "POST"])
+@login_required
+def profile():
+    userInfo = UserInfo()[0]
+    if request.method == "GET":
+        return render_template("profile.html", username=userInfo['username'], bio=userInfo['bio'])
+    else:
+        search_string = request.form.get("username")
+        #TODO Search Engine to find relevant matches
+        matches = db.execute("SELECT username, bio FROM users WHERE id!=:user_id", user_id=session["user_id"])
+        results = []
+        for match in matches:
+            if match["username"] == search_string:
+                results.append(match)
+        if not results:
+            return render_template("profile.html", method="POST", username=userInfo['username'], bio=userInfo['bio'])
+        else: 
+            return render_template("profile.html", method="POST", results=results, username=userInfo['username'], bio=userInfo['bio'])
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    """Log user in"""
-    # Forget any user_id
     session.clear()
-    # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
-        # Ensure username was submitted
         if not request.form.get("username"):
             return apology("You must provide username", 403)
-        # Ensure password was submitted
         elif not request.form.get("password"):
             return apology("You must provide password", 403)
-        # Query database for username
-        rows = db.execute("SELECT * FROM users WHERE username = :username",
-                          username=request.form.get("username"))
-        # Ensure username exists and password is correct
-        if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
+        accountExists = db.execute("SELECT * FROM users WHERE username = :username", username=request.form.get("username"))
+        if len(accountExists) != 1 or not check_password_hash(accountExists[0]["hash"], request.form.get("password")):
             return apology("Invalid username and/or password", 403)
-        # Remember which user has logged in
-        session["user_id"] = rows[0]["id"]
-        # Redirect user to home page
+        session["user_id"] = accountExists[0]["id"]
         return redirect("/")
-    # User reached route via GET (as by clicking a link or via redirect)
     else:
         return render_template("login.html")
 
-
 @app.route("/logout")
 def logout():
-    """Log user out"""
-    # Forget any user_id
     session.clear()
-    # Redirect user to login form
-    return redirect("/")
+    return redirect("/login")
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
-    # User reached route via GET (as by clicking a link or via redirect)
     if request.method == "GET":
         return render_template("register.html")
-    # User reached route via POST (as by submitting a form via POST)
     elif request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
@@ -185,7 +232,7 @@ def register():
             tablename = username+"History"
             db.execute("INSERT INTO users (username, hash) VALUES (:username, :hash)", username=username, hash=generate_password_hash(password))
             db.execute("CREATE TABLE IF NOT EXISTS :username ('symbol' TEXT NOT NULL PRIMARY KEY, 'number' NUMERIC NOT NULL)", username=username)
-            db.execute("CREATE TABLE IF NOT EXISTS :tablename ('transaction' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,'symbol' TEXT NOT NULL,'number' NUMERIC NOT NULL, 'price' NUMERIC NOT NULL, 'timestamp' DATETIME DEFAULT CURRENT_TIMESTAMP)", tablename=tablename)
+            db.execute("CREATE TABLE IF NOT EXISTS :tablename ('transaction' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,'symbol' TEXT NOT NULL,'number' NUMERIC NOT NULL, 'price' NUMERIC NOT NULL, 'timestamp' DATETIME DEFAULT CURRENT_TIMESTAMP, 'nature' TEXT DEFAULT 'na')", tablename=tablename)
             return redirect("/")
         # Check for error
         except Exception as inst:
@@ -194,61 +241,7 @@ def register():
             else:
                 return apology(str(inst))
 
-@app.route("/sell", methods=["GET", "POST"])
-@login_required
-def sell():
-    """Sell shares of stock"""
-    user_id_info = db.execute("SELECT username, cash, wealth FROM users WHERE id = :id", id = session["user_id"])
-    if request.method == "GET":
-        stock_list = db.execute("SELECT symbol FROM :username", username=user_id_info[0]['username'])
-        return render_template("sell.html", stock_list=stock_list)
-    elif request.method == "POST":
-        stock = request.form.get("symbol")
-        number = int(request.form.get("number"))
-        number_owned = db.execute("SELECT number FROM :username WHERE symbol=:symbol", username=user_id_info[0]['username'], symbol=stock)
-        if not number:
-            return apology("You must provide a symbol")
-        elif number > number_owned[0]['number']:
-            return apology("You do not own " + str(number) + " stocks")
-        quote = lookup(stock)
-        cash = quote['price'] * number
-        remaining = number_owned[0]['number'] - number
-        if remaining != 0:
-            db.execute("UPDATE :username SET number=:remaining WHERE symbol=:symbol", username=user_id_info[0]['username'], remaining =remaining, symbol=stock)
-        else:
-            db.execute("DELETE FROM :username WHERE symbol=:symbol", username=user_id_info[0]['username'], symbol=stock)
-        db.execute("UPDATE users SET cash=:total WHERE username=:username", username=user_id_info[0]['username'], total=cash+user_id_info[0]['cash'])
-        tablename = user_id_info[0]['username'] + "History"
-        db.execute("INSERT INTO :tablename ('symbol','number', 'price') VALUES (:symbol, :number, :price)", tablename=tablename, symbol=stock, number=number, price=quote['price'])
-        return redirect("/")
-    else:
-        pass
-
-@app.route("/connect", methods=["GET", "POST"])
-@login_required
-def connect():
-    if request.method == "GET":
-        return render_template("connect.html", method="GET")
-    elif request.method == "POST":
-        search_string = request.form.get("username")
-        matches = db.execute("SELECT username, bio FROM users WHERE id!=:user_id", user_id=session["user_id"])
-        results = []
-        for match in matches:
-            if match["username"] == search_string:
-                results.append(match)
-        return render_template("connect.html", method="POST", results=results)
-    else:
-        return apology("Unknown method")
-
-@app.route("/profile", methods=["GET"])
-@login_required
-def profile():
-    user_id_info = db.execute("SELECT * FROM users WHERE id = :id", id = session["user_id"])
-    if request.method == "GET":
-        return render_template("profile.html", username=user_id_info[0]['username'], bio=user_id_info[0]['bio'])
-    else:
-        return apology("Unknown method")
-
+"""
 @app.route("/chat", methods=["GET", "POST"])
 #@login_required
 def chat():
@@ -262,9 +255,9 @@ def handle_connect(response):
 def handle_message(sid, message):
     print("Socket:", sid, "Message:", message)
     send(message, namespace='/chat', broadcast=True)
+"""
 
 def errorhandler(e):
-    """Handle error"""
     if not isinstance(e, HTTPException):
         e = InternalServerError()
     return apology(e.name, e.code)
