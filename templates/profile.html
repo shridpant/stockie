@@ -4,12 +4,41 @@
     {{ username }}
 {% endblock %}
 
+{% block custom %}
+<style>
+.input_bio {
+    font-family: inherit;
+    font-size: inherit;
+    border: none;
+    line-height: 1.5;
+    background: transparent;
+  }
+  .input_dp {
+    font-family: inherit;
+    font-size: 0.45rem;
+    line-height: 1.5;
+  }
+</style>
+{% endblock %}
+
 {% block main %}
 
-<h1>Hi, {{ username }}!</h1>
-{% if bio != None %}
-    <p><em><span style="font-size:1.5rem;">" </span>{{ bio }}<span style="font-size:1.5rem;"> "</span></em></p>
-{% endif %}
+<div class="row">
+    <div class="col" style="text-align: right;">
+        <img src="{{ dp }}" style="max-width:35%; max-height:auto" alt="Profile Picture"><br /><br />
+        <form action="/profile" method="post" enctype="multipart/form-data">
+            <p>
+                <input class="input_dp" type="file" name="dp_upload"><input class="input_dp" type="submit" value="Upload">
+            </p>
+        </form>
+    </div>
+    <div class="col-6" style="text-align: left;">
+        <h1>Hi, {{ username }}!</h1>
+    <form action="/profile" method="POST">
+        <input class="input_bio" name="bio" type="search" value="{{ bio }}" maxlength="20">
+    </form>
+    </div>
+</div>
 <br /><hr><br />
 
 <form role="search" action="/profile" method="post">

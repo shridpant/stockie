@@ -4,11 +4,12 @@ from flask import Flask, flash, jsonify, redirect, render_template, request, ses
 from flask_socketio import SocketIO, send, emit
 from flask_session import Session
 from tempfile import mkdtemp
+from werkzeug.utils import secure_filename
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from helpers import apology, login_required, lookup, usd, getKeys, newsapi
-from ml_models import twitter
+from src.helpers import newsapi, apology, login_required, lookup, usd, getKeys
+from src import twitter
 
 # Configure application
 app = Flask(__name__)
@@ -174,20 +175,39 @@ def history():
 @login_required
 def profile():
     userInfo = UserInfo()[0]
+    dp = "static/dp/" + userInfo['username'] + "." + userInfo['dp']
+    if not os.path.exists(dp):
+        dp = "../static/dp/"+"default.png"
+    else:
+        dp = "../static/dp/" + userInfo['username'] + "." + userInfo['dp']
     if request.method == "GET":
-        return render_template("profile.html", username=userInfo['username'], bio=userInfo['bio'])
+        return render_template("profile.html", username=userInfo['username'], bio=userInfo['bio'], dp=dp)
     else:
         search_string = request.form.get("username")
+        new_bio = request.form.get("bio")
+        dp_file = request.form.get("dp_upload")
         #TODO Search Engine to find relevant matches
-        matches = db.execute("SELECT username, bio FROM users WHERE id!=:user_id", user_id=session["user_id"])
-        results = []
-        for match in matches:
-            if match["username"] == search_string:
-                results.append(match)
-        if not results:
-            return render_template("profile.html", method="POST", username=userInfo['username'], bio=userInfo['bio'])
-        else: 
-            return render_template("profile.html", method="POST", results=results, username=userInfo['username'], bio=userInfo['bio'])
+        if search_string:
+            matches = db.execute("SELECT username, bio FROM users WHERE id!=:user_id", user_id=session["user_id"])
+            results = []
+            for match in matches:
+                if match["username"] == search_string:
+                    results.append(match)
+            if not results:
+                return render_template("profile.html", method="POST", username=userInfo['username'], bio=userInfo['bio'], dp=dp)
+            else: 
+                return render_template("profile.html", method="POST", results=results, username=userInfo['username'], bio=userInfo['bio'], dp=dp)
+        elif new_bio:
+            db.execute("UPDATE users SET bio=:new_bio WHERE id=:user_id", new_bio=new_bio, user_id=session["user_id"])
+            return redirect("/profile")
+        elif dp_file:
+            filename = secure_filename(dp_file.filename)
+            file_extension = filename.rsplit('.', 1)[1].lower()
+            db.execute("UPDATE users SET dp=:new_dp WHERE id=:user_id", new_dp=file_extension, user_id=session["user_id"])
+            dp_file.save('static/dp/' + userInfo['username'] + "." + file_extension)
+            return redirect("/profile")
+        else:
+            return redirect("/profile")
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
