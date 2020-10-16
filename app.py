@@ -88,7 +88,7 @@ def insights():
         else:
             #TODO Better analysis methods
             try:
-                tweetInsights = twitter.sentiment(twitterAPI, 10, search_phrase)
+                tweetInsights = twitter.sentiment(twitterAPI, 7, search_phrase)
                 newsInsights = newsapi(search_phrase)
                 if len(tweetInsights) == 0 and len(newsInsights) == 0:
                     return render_template("insights.html", method="POST", search_phrase=search_phrase)
@@ -108,7 +108,7 @@ def buy():
     if request.method == "GET":
         return render_template("buy.html")
     else:
-        symbol = request.form.get("symbol")
+        symbol = request.form.get("symbol").upper()
         number = request.form.get("number")
         if not symbol or not number:
             return apology("Invalid input")

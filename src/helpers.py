@@ -35,6 +35,7 @@ def login_required(f):
 
 def newsapi(phrase):
     url = ('http://newsapi.org/v2/top-headlines?'
+        'pageSize=5&'
         'q=' + phrase + '&'
         'sortBy=popularity&'
         'apiKey=' + keys["news"])

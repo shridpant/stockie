@@ -1,3 +1,7 @@
+body{
+    font-family: Arial, Helvetica, sans-serif;
+}
+
 nav .navbar-brand
 {
     /* size for brand */
@@ -34,7 +38,7 @@ main .form-control
 main
 {
     /* scroll horizontally as needed */
-    overflow-x: auto;
+    overflow-x: hidden;
 
     /* center contents */
     text-align: center;
@@ -72,4 +76,8 @@ table, th, td {
 .box-blue{ 
 	background:#00f; 
 } 
+
+.nav-link{
+    color:#808080;
+}
 
