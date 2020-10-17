@@ -110,7 +110,7 @@ def buy():
     else:
         symbol = request.form.get("symbol").upper()
         number = request.form.get("number")
-        if not symbol or not number:
+        if not symbol or not number or int(number)<1:
             return apology("Invalid input")
         number = int(number)
         quote = lookup(symbol)
@@ -181,11 +181,16 @@ def profile():
     else:
         dp = "../static/dp/" + userInfo['username'] + "." + userInfo['dp']
     if request.method == "GET":
-        return render_template("profile.html", username=userInfo['username'], bio=userInfo['bio'], dp=dp)
+        return render_template("my_profile.html", userInfo=userInfo, dp=dp)
     else:
         search_string = request.form.get("username")
         new_bio = request.form.get("bio")
-        dp_file = request.form.get("dp_upload")
+        new_email = request.form.get("email")
+        new_phone = request.form.get("phone")
+        if request.form.get("dp_submit"):
+            dp_file = request.files['dp_upload']
+        else :
+            dp_file=""
         #TODO Search Engine to find relevant matches
         if search_string:
             matches = db.execute("SELECT username, bio FROM users WHERE id!=:user_id", user_id=session["user_id"])
@@ -194,11 +199,14 @@ def profile():
                 if match["username"] == search_string:
                     results.append(match)
             if not results:
-                return render_template("profile.html", method="POST", username=userInfo['username'], bio=userInfo['bio'], dp=dp)
+                return render_template("my_profile.html", method="POST", userInfo=userInfo, dp=dp)
             else: 
-                return render_template("profile.html", method="POST", results=results, username=userInfo['username'], bio=userInfo['bio'], dp=dp)
-        elif new_bio:
-            db.execute("UPDATE users SET bio=:new_bio WHERE id=:user_id", new_bio=new_bio, user_id=session["user_id"])
+                return render_template("my_profile.html", method="POST", results=results, userInfo=userInfo, dp=dp)
+        elif new_bio or new_email or new_phone:
+            to_update = [["bio", new_bio], ["email", new_email], ["phone", new_phone]]
+            for parameter in to_update:
+                if parameter[1]:
+                    db.execute("UPDATE users SET :param=:new_param WHERE id=:user_id", param=parameter[0], new_param=parameter[1], user_id=session["user_id"])
             return redirect("/profile")
         elif dp_file:
             filename = secure_filename(dp_file.filename)
@@ -208,6 +216,19 @@ def profile():
             return redirect("/profile")
         else:
             return redirect("/profile")
+
+@app.route("/username:<string:target_uname>")
+@login_required
+def sayHello(target_uname):
+    match=db.execute("SELECT * FROM users WHERE username=:target_uname", target_uname=target_uname)
+    if not match:
+        return apology("User not found!", 404)
+    dp = "static/dp/" + match[0]['username'] + "." + match[0]['dp']
+    if not os.path.exists(dp):
+        dp = "../static/dp/"+"default.png"
+    else:
+        dp = "../static/dp/" + match[0]['username'] + "." + match[0]['dp']
+    return render_template("target_profile.html", dp=dp, user=match[0])
 
 @app.route("/login", methods=["GET", "POST"])
 def login():

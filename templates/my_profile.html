@@ -1,0 +1,136 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    {{ username }}
+{% endblock %}
+
+{% block custom %}
+<style>
+.input_bio {
+    font-family: inherit;
+    font-size: inherit;
+    border: none;
+    line-height: 1.5;
+    background: transparent;
+  }
+  .input_dp {
+    font-family: inherit;
+    font-size: 0.50rem;
+    line-height: 1.5;
+  }
+</style>
+{% endblock %}
+
+{% block main %}
+        <div class="card border-dark mb-3 text-center">
+            <div class="card-header">
+              <ul class="nav nav-tabs card-header-tabs"  id="profile-list" role="tablist">
+                <li class="nav-item">
+                    {% if method is defined %}
+                    <a class="nav-link" href="#public" role="tab" aria-controls="public" aria-selected="false">Public</a>
+                    {% else %}
+                    <a class="nav-link active" href="#public" role="tab" aria-controls="public" aria-selected="true">Public</a>
+                    {% endif %}
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#settings" role="tab" aria-controls="settings" aria-selected="false">Settings</a>
+                </li>
+                <li class="nav-item">
+                    {% if method is defined %}
+                        <a class="nav-link active" href="#search" role="tab" aria-controls="search" aria-selected="true">Search</a>
+                    {% else %}
+                        <a class="nav-link" href="#search" role="tab" aria-controls="search" aria-selected="false">Search</a>
+                    {% endif %}
+                </li>
+              </ul>
+            </div>
+            <div class="card-body text-dark">
+                <div class="tab-content mt-3">
+                    {% if method is defined %}
+                    <div class="tab-pane" id="public" role="tabpanel" aria-labelledby="public-tab">
+                    {% else %}
+                    <div class="tab-pane active" id="public" role="tabpanel" aria-labelledby="public-tab">
+                    {% endif %}
+                        <div class="row">
+                            <div class="col-4" style="text-align: right;">
+                                <img src="{{ dp }}" style="max-width:50%; max-height:auto" alt="Profile Picture"><br /><br />
+                            </div>
+                            <div class="col-6">
+                                <h2 class="card-title"><strong>Hi, {{ userInfo["username"] }}!</strong></h2>
+                                <p class="card-text" style="text-align: center;">
+                                    {{ userInfo["bio"] }}
+                                <br /><br /><a href="" class="btn btn-outline-dark">Following: 0</a>&nbsp;
+                                <a href="" class="btn btn-outline-dark">Followers: 0</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div> 
+                <div class="tab-pane" id="settings" role="tabpanel" aria-labelledby="settings-tab">
+                    <h2 class="card-title"><strong>Settings</strong></h2><br />
+                    <p class="card-text" style="text-align: center;">
+                        <div class="row">
+                            <div class="col-4" style="text-align: right;">
+                                <img src="{{ dp }}" style="max-width:60%; max-height:auto" alt="Profile Picture"><br /><br />
+                                <form action="/profile" method="post" enctype="multipart/form-data">
+                                    <p>
+                                        <input class="input_dp" type="file" name="dp_upload"><input class="input_dp" name="dp_submit" type="submit" value="Upload">
+                                    </p>
+                                </form>
+                            </div>
+                            <div class="col-6" style="text-align: left;">
+                                <div class="form-group">
+                                    <form action="/profile" method="POST">
+                                        Bio: <input class="input_bio form-control" name="bio" type="search" value='{{ userInfo["bio"] }}'' maxlength="20"><br />
+                                        Email: <input class="input_bio form-control" name="email" type="email" value='{{ userInfo["email"] }}' maxlength="40"><br />
+                                        Phone: <input class="input_bio form-control" name="phone" type="tel" pattern="[0-9]{3}[0-9]{4}[0-9]{3}" value='{{userInfo["phone"]}}'><br /><br />
+                                        <input class="form-control" name="submit" type="submit" value="Save">
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </p>
+                        </div>
+                {% if method is defined %}
+                <div class="tab-pane active" id="search" role="tabpanel" aria-labelledby="search-tab">
+                {% else %}
+                <div class="tab-pane" id="search" role="tabpanel" aria-labelledby="search-tab">
+                {% endif %}
+                    <form role="search" action="/profile" method="post">
+                        <div class="form-group">
+                            <input autocomplete="off" autofocus class="form-control" name="username" placeholder="User" type="text">
+                            &nbsp;<input type="submit" name="submit" value="Find">
+                        </div>
+                    </form>
+                    {% if method == "POST" %}
+                    <br />
+                        {% if results is defined %}
+                            <dl class="center">
+                                {% for result in results %}
+                                    <dt><a href='/username:{{ result["username"] }}' target="_blank">{{ result["username"] }}</a></dt>
+                                    <dd>- {{ result["bio"] }}</dd>
+                                {% endfor %}
+                            </dl>
+                        {% else %}
+                            <p><strong>No results</strong> found in our database :/</p>  
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+          </div>
+          </div>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/popper.min.js'></script>
+<script src='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js'></script>
+<script>
+    $('#profile-list a').on('click', function (e) {
+  e.preventDefault()
+  $(this).tab('show')
+    })
+</script>
+{% endblock %}
+
+{% block footer %}
+<footer class="small text-center text-muted">
+Stokie is an open source project. Follow the documentation to <a href="https://github.com/shridpant/stockie" target="_blank">learn more</a>.</p>
+</footer>
+{% endblock %} 

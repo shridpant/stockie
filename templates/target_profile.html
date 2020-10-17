@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    {{ user["username"] }}
+{% endblock %}
+
+{% block main %}
+
+<div class="row">
+    <div class="col-4" style="text-align: right;">
+        <img src="{{ dp }}" style="max-width:75%; max-height:auto" alt="Profile Picture">
+    </div>
+    <div class="col-6" style="text-align: left;">
+        <div class="col-6" style="text-align: left;">
+            <div class="card border-dark mb-3 text-center" style="width:28rem;">
+                <div class="card-body text-dark">
+                    <h2 class="card-title"><strong>{{ user["username"] }}</strong></h2>
+                  <p class="card-text">
+                    {{ user["bio"] }}<br />
+                  </p>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <a href='' class="btn btn-outline-dark">Message</a>&nbsp;
+                    <a href='mailto:{{ user["email"] }}' class="btn btn-outline-dark">Email</a>&nbsp;
+                    <a href='tel:{{ user["phone"] }}' class="btn btn-outline-dark">Phone</a>
+                </div>
+              </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block footer %}
+<footer class="small text-center text-muted">
+Stokie is an open source project. Follow the documentation to <a href="https://github.com/shridpant/stockie" target="_blank">learn more</a>.</p>
+</footer>
+{% endblock %} 

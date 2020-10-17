@@ -7,16 +7,19 @@
 {% block main %}
 
 {% if history is defined %}
-<h3>Transactions</h3><br />
+<h3>Transactions</h3>
 
-<table class="center">
+<table class="styled-table center">
     <tr>
+      <thead>
       <th>Transaction ID</th>
       <th>Company</th>
       <th>Number of Shares</th>
       <th>Original Price</th>
       <th>Timestamp</th>
     </tr>
+    </thead>
+    <tbody>
     {% for row in history %}
     <tr>
     <td>{{ row["transaction"] }}</td>
@@ -46,6 +49,7 @@
       <td>{{ row["timestamp"] }}</td>
     </tr>
     {% endfor %}
+    </tbody>
 </table><br />
 <p class="small text-muted" style="text-align:left;"><u>Legend:</u></p>
   <div class="box box-green"></div><p class="small text-muted" style="text-align:left;">&nbsp;&nbsp;represents the stocks that were bought</p>

@@ -18,24 +18,28 @@
 <br />
 <hr>
 <br />
-<h3>Your Holdings</h3><br />
+<h3>Your Holdings</h3>
 
 {% if stocks is defined %}
-<table class="center">
+<table class="styled-table center">
+    <thead>
     <tr>
       <th>Company</th>
       <th>Number</th>
       <th>Price</th>
       <th>Total</th>
     </tr>
+    </thead>
+    <tbody>
     {% for stock in stocks %}
     <tr>
       <td>{{ stock["symbol"] }}</td>
       <td>{{ stock["number"] }}</td>
       <td>${{ price[stock["symbol"]] }}</td>
-      <td>${{ price[stock["symbol"]] * stock["number"] }}</td>
+      <td>${{ '%0.2f'| format(price[stock["symbol"]] * stock["number"]) }}</td>
     </tr>
     {% endfor %}
+    </tbody>
 </table>
 {% else %}
 <p class="small text-center text-muted">You don't own any stocks yet. Follow the documentation to <a href="https://github.com/shridpant/stockie" target="_blank">learn more</a>.</p>
