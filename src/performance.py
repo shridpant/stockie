@@ -1,6 +1,13 @@
 import yfinance as yf
 import pandas as pd
 
+def PreInfo(stock_symbol):
+    try:
+        lookup_stock = yf.Ticker(stock_symbol)
+        return [lookup_stock.info]
+    except:
+        return None
+
 def Information(stock_symbol, period="1y"):
     try:
         global stock

@@ -11,7 +11,7 @@
         <img src="{{ info[0]['logo_url'] }}" style="width: 40%;" alt="LOGO">
     </div>
     <div class="col-6" style="text-align: left;">
-        <h1>{{ info[0]["longName"] }}</h1>
+        <h1><a href="{{ info[0]['website'] }}" target="_blank">{{ info[0]["longName"] }}</a></h1>
         <p>{{ info[0]["address1"] }}, {{ info[0]["city"] }}, {{ info[0]["state"] }}, {{ info[0]["country"] }}.</p>
     </div>
 </div>
@@ -20,46 +20,153 @@
     <div class="col" style="align-content: center;">
         <div class="card border-dark mb-3 text-center">
             <div class="card-body text-dark">
-              <h2 class="card-title"><strong>Portfolio</strong></h2>
-              <p class="card-text" style="text-align: left;">
-                Sector: {{ info[0]["sector"] }} <br/>
-                Industry: {{ info[0]["industry"] }} <br />
-                Symbol: {{ info[0]["symbol"] }}<br />
-                Market Capitalization: {{ info[0]["marketCap"] }} <br />
-                Open: {{ info[0]["open"] }} <br />
-                Previous Close: {{ info[0]["previousClose"] }} <br />
-                Fifth Day Average: {{ info[0]["fiftyDayAverage"] }} <br />
-                Profit Margin: {{ info[0]["profitMargins"] }} <br />
-                PEG Ratio: {{ info[0]["pegRatio"]}} <br />
-                Payout Ratio: {{ info[0]["payoutRatio"] }} <br />
-                Enterprise To Revenue: {{ info[0]["enterpriseToRevenue"] }} <br />                
-                Divident Rate: {{ info[0]["dividendRate"]}} <br />
-                Earnings' Quarterly Growth: {{ info[0]["earningsQuarterlyGrowth"] }} <br />
-                Regular Market Price: {{ info[0]["regularMarketPrice"] }} <br />
-                Regular Market Open: {{ info[0]["regularMarketOpen"] }} <br />
-                Regular Market Day Low: {{ info[0]["regularMarketDayLow"] }} <br />
-                Fifty Two Week High: {{ info[0]["fiftyTwoWeekHigh"] }} <br /> 
-                Fifty Two Week Low: {{ info[0]["fiftyTwoWeekLow"] }} <br /> 
-                Fifty Two Week Change: {{ info[0]["52WeekChange"] }}<br/>
-            </p>
-            </div>
-            <div class="card-footer bg-transparent">
-                <a href="{{ info[0]['website'] }}" target="_blank" class="btn btn-outline-dark">Website</a>&nbsp;
-                <a href="tel:{{ info[0]['phone'] }}" class="btn btn-outline-dark">Phone</a>
+                <div class="card-header bg-transparent">
+                    <h2 class="card-title"><strong>Portfolio</strong></h2>
+                  </div>
+              <p class="card-text">
+                <div class="row">
+                    <div class='col'>
+                    <h3>Valuation Measures</h3>
+                    <table class="styled-table center">
+                        <tbody>
+                            <tr>
+                                <td>Market Capitalization</td>
+                                <td>{{ info[0]["marketCap"] }}</td>
+                            </tr>
+                            <tr>
+                                <td>PEG Ratio</td>
+                                <td>{{ info[0]["pegRatio"] }}</td>
+                            </tr>
+                            <tr>
+                                <td>Payout Ratio</td>
+                                <td>{{ info[0]["payoutRatio"] }}</td>
+                            </tr>
+                            <tr>
+                                <td>Enterprise To Revenue</td>
+                                <td>{{ info[0]["enterpriseToRevenue"] }}</td>
+                            </tr>
+                            <tr>
+                                <td>Price/Book(mrq)</td>
+                                <td>{{ info[0]["priceToBook"] }}</td>
+                            </tr>
+                            <tr>
+                                <td>Price/Sales(ttm)</td>
+                                <td>{{ info[0]["priceToSalesTrailing12Months"] }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col">
+                    <h3>Profile</h3>
+                    <table class="styled-table center">
+                        <tbody>
+                            <tr>
+                                <td>Sector(s)</td>
+                                <td>{{ info[0]["sector"] }}</td>
+                            </tr>
+                            <tr>
+                                <td>Industry</td>
+                                <td>{{ info[0]["industry"] }}</td>
+                            </tr>
+                            <tr>
+                                <td>Stock Symbol</td>
+                                <td>{{ info[0]["symbol"] }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <h3>Financial Highlights</h3>
+                        <h5>Profitability & Growth</h5>
+                        <table class="styled-table center">
+                            <tbody>
+                                <tr>
+                                    <td>Profit Margin</td>
+                                    <td>{{ info[0]["profitMargins"] }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Earnings' Quarterly Growth</td>
+                                    <td>{{ info[0]["earningsQuarterlyGrowth"] }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h5>Regular Market</h5>
+                        <table class="styled-table center">
+                            <tbody>
+                                <tr>
+                                    <td>Regular Market Price</td>
+                                    <td>{{ info[0]["regularMarketPrice"] }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Regular Market Open</td>
+                                    <td>{{ info[0]["regularMarketOpen"] }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Regular Market Day Low</td>
+                                    <td>{{ info[0]["regularMarketDayLow"] }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Regular Market Day High</td>
+                                    <td>{{ info[0]["regularMarketDayHigh"] }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col">
+                        <h3>Trading Information</h3>
+                        <h5>Stock Price History</h5>
+                        <table class="styled-table center">
+                            <tbody>
+                                <tr>
+                                    <td>Open</td>
+                                    <td>{{ info[0]["open"] }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Previous Close</td>
+                                    <td>{{ info[0]["previousClose"] }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Fifth Day Average</td>
+                                    <td>{{ info[0]["fiftyDayAverage"] }}</td>
+                                </tr>   
+                                <tr>
+                                    <td>Fifty Two Week High</td>
+                                    <td>{{ info[0]["fiftyTwoWeekHigh"] }}</td>
+                                </tr>  
+                                <tr>
+                                    <td>Fifty Two Week Low</td>
+                                    <td>{{ info[0]["fiftyTwoWeekLow"] }}</td>
+                                </tr> 
+                                <tr>
+                                    <td>Fifty Two Week Change</td>
+                                    <td>{{ info[0]["52WeekChange"] }}</td>
+                                </tr>                            
+                            </tbody>
+                        </table>
+
+                        <h5>Dividents</h5>
+                        <table class="styled-table center">
+                            <tbody>
+                                <tr>
+                                    <td>Divident Rate</td>
+                                    <td>{{ info[0]["dividendRate"] }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
         </div>
     </div>
-    <div class="col">
-
-    </div>
-</div>
-
 
 {% endblock %}
 
 {% block footer %}
 <footer class="small text-center text-muted">
-Stokie is an open source project. Follow the documentation to <a href="https://github.com/shridpant/stockie" target="_blank">learn more</a>.</p>
+yfinance is an open source project. Follow this link to <a href="https://github.com/ranaroussi/yfinance" target="_blank">learn more</a>.</p>
 </footer>
 {% endblock %} 

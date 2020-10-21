@@ -16,7 +16,7 @@
     <br /><hr><br />
     <h3>Results</h3><br />
         {% if company != None %}
-                <p class="small text-center text-muted">Click to view a detailed profile for <a href="/company:{{ company[0]["shortName"] }}"><strong>{{ company[0]["longName"] }}</strong></a></p><br />
+                <p class="small text-center text-muted">Click to view a detailed profile for <a href="/company:{{ company[0]['symbol'] }}"><strong>{{ company[0]["longName"] }}</strong></a></p><br />
         {% endif %}
     <div class="container">
         <div class="row"  style="text-align: left;">
@@ -70,6 +70,6 @@
 
 {% block footer %}
 <footer class="small text-center text-muted">
-    Data provided for free by <a href="https://developer.twitter.com/en" target="_blank">Twitter</a> and <a href="https://newsapi.org/" target="_blank">News API</a>. Learn more about the Terms of Service for <a href="https://twitter.com/en/tos" target="_blank">Twitter</a> and <a href="https://newsapi.org/terms" target="_blank">News API</a>.
+    Data provided for free by <a href="https://developer.twitter.com/en" target="_blank">Twitter</a>, <a href="https://pypi.org/project/yfinance/" target="_blank">yfinance</a> and <a href="https://newsapi.org/" target="_blank">News API</a>. Learn more about the Terms of Service for <a href="https://twitter.com/en/tos" target="_blank">Twitter</a> and <a href="https://newsapi.org/terms" target="_blank">News API</a>.
 </footer>
 {% endblock %}

@@ -10,7 +10,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from src.helpers import newsapi, apology, login_required, lookup, usd, getKeys
 from src import twitter
-from src.performance import Information, Sustainability
+from src.performance import PreInfo, Information, Sustainability
 
 # Configure application
 app = Flask(__name__)
@@ -89,8 +89,7 @@ def insights():
         else:
             #TODO Better analysis methods
             try:
-                global yfinanceInsights
-                yfinanceInsights = Information(search_phrase)
+                yfinanceInsights = PreInfo(search_phrase)
                 if yfinanceInsights != None:
                     search_phrase = yfinanceInsights[0]["shortName"]
                 tweetInsights = twitter.sentiment(twitterAPI, 7, search_phrase)
@@ -109,7 +108,11 @@ def insights():
 #TODO Company Profile
 @app.route("/company:<string:company_name>")
 def company(company_name):
-    return render_template("company.html", info=yfinanceInsights)
+    informationInsights = Information(company_name)
+    if informationInsights != None:
+        return render_template("company.html", info=informationInsights)
+    else:
+        return apology("Not found", 404)
 
 @app.route("/buy", methods=["GET", "POST"])
 @login_required
