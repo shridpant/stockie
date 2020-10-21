@@ -1,0 +1,65 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    {{ info[0]["shortName"] }}
+{% endblock %}
+
+{% block main %}
+
+<div class="row">
+    <div class="col-4" style="text-align: right;">
+        <img src="{{ info[0]['logo_url'] }}" style="width: 40%;" alt="LOGO">
+    </div>
+    <div class="col-6" style="text-align: left;">
+        <h1>{{ info[0]["longName"] }}</h1>
+        <p>{{ info[0]["address1"] }}, {{ info[0]["city"] }}, {{ info[0]["state"] }}, {{ info[0]["country"] }}.</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col" style="align-content: center;">
+        <div class="card border-dark mb-3 text-center">
+            <div class="card-body text-dark">
+              <h2 class="card-title"><strong>Portfolio</strong></h2>
+              <p class="card-text" style="text-align: left;">
+                Sector: {{ info[0]["sector"] }} <br/>
+                Industry: {{ info[0]["industry"] }} <br />
+                Symbol: {{ info[0]["symbol"] }}<br />
+                Market Capitalization: {{ info[0]["marketCap"] }} <br />
+                Open: {{ info[0]["open"] }} <br />
+                Previous Close: {{ info[0]["previousClose"] }} <br />
+                Fifth Day Average: {{ info[0]["fiftyDayAverage"] }} <br />
+                Profit Margin: {{ info[0]["profitMargins"] }} <br />
+                PEG Ratio: {{ info[0]["pegRatio"]}} <br />
+                Payout Ratio: {{ info[0]["payoutRatio"] }} <br />
+                Enterprise To Revenue: {{ info[0]["enterpriseToRevenue"] }} <br />                
+                Divident Rate: {{ info[0]["dividendRate"]}} <br />
+                Earnings' Quarterly Growth: {{ info[0]["earningsQuarterlyGrowth"] }} <br />
+                Regular Market Price: {{ info[0]["regularMarketPrice"] }} <br />
+                Regular Market Open: {{ info[0]["regularMarketOpen"] }} <br />
+                Regular Market Day Low: {{ info[0]["regularMarketDayLow"] }} <br />
+                Fifty Two Week High: {{ info[0]["fiftyTwoWeekHigh"] }} <br /> 
+                Fifty Two Week Low: {{ info[0]["fiftyTwoWeekLow"] }} <br /> 
+                Fifty Two Week Change: {{ info[0]["52WeekChange"] }}<br/>
+            </p>
+            </div>
+            <div class="card-footer bg-transparent">
+                <a href="{{ info[0]['website'] }}" target="_blank" class="btn btn-outline-dark">Website</a>&nbsp;
+                <a href="tel:{{ info[0]['phone'] }}" class="btn btn-outline-dark">Phone</a>
+            </div>
+        </div>
+        </div>
+    </div>
+    <div class="col">
+
+    </div>
+</div>
+
+
+{% endblock %}
+
+{% block footer %}
+<footer class="small text-center text-muted">
+Stokie is an open source project. Follow the documentation to <a href="https://github.com/shridpant/stockie" target="_blank">learn more</a>.</p>
+</footer>
+{% endblock %} 

@@ -15,8 +15,11 @@
 {% if method == "POST" %}
     <br /><hr><br />
     <h3>Results</h3><br />
-    <div class="container" style="text-align: left;">
-        <div class="row">
+        {% if company != None %}
+                <p class="small text-center text-muted">Click to view a detailed profile for <a href="/company:{{ company[0]["shortName"] }}"><strong>{{ company[0]["longName"] }}</strong></a></p><br />
+        {% endif %}
+    <div class="container">
+        <div class="row"  style="text-align: left;">
           <div class="col">
               <img src="../static/Twitter_Logo_Blue.svg" height="30"><br /><br />
             {% if tweets is defined %}
@@ -39,7 +42,7 @@
                     {% endfor %}
                 </dl>
             {% else %}
-                <p>No results available for <em>{{ search_phrase }}</em>.</p>
+                <p>No results available for <em>"{{ search_phrase }}"</em>.</p>
             {% endif %}
           </div>
           <div class="col">
@@ -54,7 +57,7 @@
                         <dd>By {{ article["source"]["name"] }} at {{ article["publishedAt"] }}</dd><br />
                 {% endfor %}
             {% else %}
-                <p>No results available for <em>{{ search_phrase }}</em>.</p>
+                <p>No results available for <em>"{{ search_phrase }}"</em>.</p>
             {% endif %}
           </div>
         </div>

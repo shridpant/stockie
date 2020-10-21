@@ -10,6 +10,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from src.helpers import newsapi, apology, login_required, lookup, usd, getKeys
 from src import twitter
+from src.performance import Information, Sustainability
 
 # Configure application
 app = Flask(__name__)
@@ -88,18 +89,27 @@ def insights():
         else:
             #TODO Better analysis methods
             try:
+                global yfinanceInsights
+                yfinanceInsights = Information(search_phrase)
+                if yfinanceInsights != None:
+                    search_phrase = yfinanceInsights[0]["shortName"]
                 tweetInsights = twitter.sentiment(twitterAPI, 7, search_phrase)
                 newsInsights = newsapi(search_phrase)
                 if len(tweetInsights) == 0 and len(newsInsights) == 0:
-                    return render_template("insights.html", method="POST", search_phrase=search_phrase)
+                    return render_template("insights.html", method="POST", search_phrase=search_phrase, company = yfinanceInsights)
                 elif len(tweetInsights) == 0:
-                    return render_template("insights.html", method="POST", news=newsInsights, search_phrase=search_phrase)
+                    return render_template("insights.html", method="POST", news=newsInsights, search_phrase=search_phrase, company = yfinanceInsights)
                 elif len(newsInsights) == 0:
-                    return render_template("insights.html", method = "POST", tweets = tweetInsights, search_phrase=search_phrase)
+                    return render_template("insights.html", method = "POST", tweets = tweetInsights, search_phrase=search_phrase, company = yfinanceInsights)
                 else:
-                    return render_template("insights.html", method = "POST", tweets = tweetInsights, news=newsInsights)
+                    return render_template("insights.html", method = "POST", tweets = tweetInsights, news=newsInsights, company = yfinanceInsights)
             except Exception as inst:
                 return apology(str(inst))
+
+#TODO Company Profile
+@app.route("/company:<string:company_name>")
+def company(company_name):
+    return render_template("company.html", info=yfinanceInsights)
 
 @app.route("/buy", methods=["GET", "POST"])
 @login_required
