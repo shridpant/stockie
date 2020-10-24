@@ -4,6 +4,12 @@
     {{ info[0]["shortName"] }}
 {% endblock %}
 
+{% block custom %}
+<style>
+
+</style>
+{% endblock %}
+
 {% block main %}
 
 <div class="row">
@@ -14,7 +20,7 @@
         <h1><a href="{{ info[0]['website'] }}" target="_blank">{{ info[0]["longName"] }}</a></h1>
         <p>{{ info[0]["address1"] }}, {{ info[0]["city"] }}, {{ info[0]["state"] }}, {{ info[0]["country"] }}.</p>
     </div>
-</div>
+</div><br />
 
 <div class="row">
     <div class="col" style="align-content: center;">
@@ -157,11 +163,85 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
+                </div><br />
+                <div class="row">
+                    <div class="col">
+                        <h3>Chart</h3>
+                      <canvas id="myChart" class="styled-table"></canvas>
+                    </div>
+                </div><br />
             </div>
         </div>
         </div>
-    </div>
+</div>
+<br />
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+<script>
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var myLineChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: Array({{open}}.length).map((x) => x),
+            datasets: [{
+                label: 'Open',
+                data: {{open}},
+                borderColor: "#3e95cd",
+                backgroundColor: "#3e95cd",
+                pointRadius: 0,
+                fill: false
+            },{
+                label: 'Close',
+                data: {{close}},
+                hidden: true,
+                borderColor: "#c45850",
+                backgroundColor: "#c45850",
+                pointRadius: 0,
+                fill: false
+            },{
+                label: 'High',
+                data: {{high}},
+                hidden: true,
+                borderColor: "#8e5ea2",
+                pointRadius: 0,
+                fill: false
+            },{
+                label: 'Low',
+                data: {{low}},
+                hidden: true,
+                borderColor: "#3cba9f",
+                pointRadius: 0,
+                fill: false,
+            }]
+            },
+        options: {
+            layout: {
+            padding: {
+                left: 50,
+                right: 50,
+                top: 50,
+                bottom: 50
+            }
+        },
+            legend: {
+                display: true,
+                position: 'bottom'
+            },
+            title: {
+            position: 'top',
+            display: true,
+            text: "{{ info[0]['longName'] }}'s stock performance over the last 1 year"
+            },
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
+</script>
 
 {% endblock %}
 

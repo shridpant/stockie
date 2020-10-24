@@ -109,8 +109,12 @@ def insights():
 @app.route("/company:<string:company_name>")
 def company(company_name):
     informationInsights = Information(company_name)
+    open_df = informationInsights[1]["Open"].tolist()
+    close_df = informationInsights[1]["Close"].tolist()
+    high_df = informationInsights[1]["High"].tolist()
+    low_df = informationInsights[1]["Low"].tolist()
     if informationInsights != None:
-        return render_template("company.html", info=informationInsights)
+        return render_template("company.html", info=informationInsights, open=open_df, close=close_df, high=high_df, low=low_df)
     else:
         return apology("Not found", 404)
 
