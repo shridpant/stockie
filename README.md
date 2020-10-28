@@ -29,9 +29,10 @@
 
 * [About the Project](#about-the-project)
     * [Built With](#built-with)
+    * [Usage](#usage)
 * [License](#license)
 * [Contact](#contact)
-* [Acknowledgements](#acknowledgements)
+* [Acknowledements](#acknowledements)
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
@@ -43,6 +44,15 @@ This repository contains the source code for Stockie- an investment portfolio ma
 ### Built With
 
 The server-side application was built on Flask and Socket.IO. Other resources included SQLite3 database management, and HTML, CSS and JavaScript for client-side application. Stockie was made possible by many open-sourced libraries and frameworks.
+
+### Usage
+
+To execute, simply:
+
+1. Clone this repository with `git clone https://github.com/shridpant/stockie`. 
+2. Navigate to the root folder of the project and execute `pip install -r requirements.txt` to install all dependencies.
+3. Start your server with `python app.py`.
+4. Open the address from your terminal on your browser. And you're all set!
 
 <!-- LICENSE -->
 ## License
