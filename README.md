@@ -1,6 +1,6 @@
-[![Issues][issues]][issues-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
 ![github-shield]
+[![LinkedIn][linkedin-shield]][linkedin-url]
+[![Issues][issues]][issues-url]
 [![License][license-shield]][license-url]
 
 <br />
@@ -12,7 +12,7 @@
   <h3 align="center">Stockie</h3>
 
   <p align="center">
-    Welcome to the GitHub repository of Stokie! Stockie is an open source project distributed under the `MIT License`.
+    Welcome to the GitHub repository of Stokie!
     <br />
     <a href="https://github.com/shridpant/stockie/blob/main/README.md"><strong>Explore the docs »</strong></a>
     <br />
@@ -91,7 +91,7 @@ Distributed under the MIT License. See [LICENSE](https://github.com/shridpant/st
 <!-- CONTACT -->
 ## Contact
 
-Feel free to hmu on my [LinkedIn](https://www.linkedin.com/in/shridpant/)
+Feel free to hmu on my [LinkedIn](https://www.linkedin.com/in/shridpant/).
 
 <!-- ACKNOWLEDGEMENTS -->
 ## Acknowledements
@@ -121,5 +121,5 @@ Stockie wouldn't be possible without the following resources:
 [github-shield]: https://img.shields.io/github/followers/shridpant?style=social
 [product-screenshot]: static/readme/screenshot.PNG
 [insights-screenshot]: static/readme/insights-screenshot.PNG
-[company-screenshot]: static/readme/company-screenshot.PNG
+[company-screenshot]: static/readme/company-screenshot.png
 [profile-screenshot]: static/readme/profile-screenshot.PNG
