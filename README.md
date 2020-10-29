@@ -41,7 +41,7 @@
 
 [![Product Name Screenshot][product-screenshot]](https://github.com/shridpant/stockie)
 
-This repository contains the source code for *Stockie*- an investment portfolio management web application. The state-of-the-art recommendation engine provides real-time personalized insights for its users. Analysis of tweets, relevant news, the stocks' historic performances and many other parameters are evaluated for *the most up-to-date* insights. Besides this, the users may visit eachother's profiles!
+This repository contains the source code for *Stockie*- an investment portfolio management web application. The state-of-the-art recommendation engine provides real-time personalized insights for its users. Analysis of tweets, relevant news, the stocks' historic performances and many other parameters are evaluated for *the most up-to-date* insights.
 
 ### Built With
 
@@ -51,36 +51,37 @@ The server-side application was built with Flask and Socket.IO. Other resources 
 
 The web interface is simple and easy to use. After a one-step registration process, the users may log in and immediately start trading stocks. Each user is provided with $10,000/- cash at the start, which the users may utilize to trade stocks. To execute, simply:
 
-1. Clone this repository with `git clone https://github.com/shridpant/stockie`. Please ensure that you have all the dependencies from `requirements.txt` installed.
-2. Start your server with `python app.py`.
-3. Open the address from your terminal on your browser. And you're all set!
+1. Clone this repository with git clone `https://github.com/shridpant/stockie`.
+2. Navigate to the root folder of the project and execute `pip install -r requirements.txt` to install all dependencies.
+3. Author _keys.json_ on the root folder of the project with relevant keys from _IEX_, _News API_ and _Twitter_. Follow the format:
+> {
+>    "IEX" : "",
+>    "CONSUMER_KEY" : "",
+>    "CONSUMER_SECRET" : "",
+>    "ACCESS_KEY" : "",
+>    "ACCESS_SECRET" : "",
+>    "news" : ""
+>}
+4. Start your server with `python app.py`.
+5. Open the address from your terminal on your browser. And you're all set!
 
 ## Features
 
-Stockie provides state-of-the-art stock analysis tools to its users. This includes up-to-date performance metrics from trusted sources, real-time tweet and news insights, and a recommender engine based on the stocks' historic data. An example of the insights:
+Stockie provides state-of-the-art *stock analysis tools* to its users. This includes up-to-date performance metrics from trusted sources, real-time tweet and news insights, and a recommender engine based on the stocks' historic data. An example of the insights:
 
 [![Insights Screenshot][insights-screenshot]](https://github.com/shridpant/stockie)
 
-If a registered `stock symbol` was entered as a search query, a request is made via yfinance for additional information. The user is, then, provided a link to a dynamically created company profile for additional insights. An example of the `company profile `: 
+If a registered `stock symbol` was entered as a search query, a request is made via _yfinance_ for additional information. The user is, then, provided a link to a dynamically created _company profile_ for additional insights. An example of the *company profile*: 
 
 [![Company Profile Screenshot][company-screenshot]](https://github.com/shridpant/stockie)
 
-The users may connect with one another to engage in relevant discussions. Each user maintains a public profile bearing public contact information. The users may search and visit each other's profiles to chat/email/phone. An example of this profile:
+The users may connect with one another to engage in relevant discussions. Each user maintains a public profile bearing their public contact information. The users may search and visit each other's profiles to chat/email/phone. An example of this profile:
 
 [![Profile Screenshot][profile-screenshot]](https://github.com/shridpant/stockie)
 
 ## Contributing
 
 This project welcomes contributions and suggestions. Feel free to fork this repository or submit your ideas through [issues](https://github.com/shridpant/stockie/issues).
-
-### Usage
-
-To execute, simply:
-
-1. Clone this repository with `git clone https://github.com/shridpant/stockie`. 
-2. Navigate to the root folder of the project and execute `pip install -r requirements.txt` to install all dependencies.
-3. Start your server with `python app.py`.
-4. Open the address from your terminal on your browser. And you're all set!
 
 <!-- LICENSE -->
 ## License
