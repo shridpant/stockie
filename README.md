@@ -8,11 +8,11 @@
   <a href="https://github.com/shridpant/stockie">
     <img src="static/readme/title_icon.png" alt="Logo" width="200" height="75">
   </a>
-
+  
   <h3 align="center">Stockie</h3>
 
   <p align="center">
-    Welcome to the GitHub repository of Stokie!
+    Welcome to the GitHub repository of Stokie! Stockie is an open source project distributed under the `MIT License`.
     <br />
     <a href="https://github.com/shridpant/stockie/blob/main/README.md"><strong>Explore the docs »</strong></a>
     <br />
@@ -29,6 +29,9 @@
 
 * [About the Project](#about-the-project)
     * [Built With](#built-with)
+    * [Usage](#usage)
+* [Features](#features)
+* [Contrubuting](#contributing)
 * [License](#license)
 * [Contact](#contact)
 * [Acknowledgements](#acknowledgements)
@@ -36,26 +39,61 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://github.com/shridpant/stockie)
+[![Product Name Screenshot][product-screenshot]](https://github.com/shridpant/stockie)
 
 This repository contains the source code for Stockie- an investment portfolio management web application. The state-of-the-art recommendation engine provides real-time personalized insights for its users. Analysis of tweets, relevant news, the stocks' historic performances and many others parameters are evaluated for the most up-to-date suggestions. Besides this, the users may connect and discuss their portfolies through chat!
 
 ### Built With
 
-The server-side application was built on Flask and Socket.IO. Other resources included SQLite3 database management, and HTML, CSS and JavaScript for client-side application. Stockie was made possible by many open-sourced libraries and frameworks.
+The server-side application was built with Flask and Socket.IO. Other resources included SQLite3 for database management, and HTML, CSS and JavaScript for the client-side application. Stockie was made possible by many open-sourced libraries and frameworks.
+
+### Usage
+
+The web interface is simple and easy to use. After a one-step registration process, the users may log in and immediately start trading stocks. Each user is provided with $10,000/- cash at the start, which the users may utilize to trade stocks. To execute, simply:
+
+1. Clone this repository with `git clone https://github.com/shridpant/stockie`. Please ensure that you have all the dependencies from `requirements.txt` installed.
+2. Start your server with `python app.py`.
+3. Open the address from your terminal on your browser. And you're all set!
+
+## Features
+
+Stockie provides state-of-the-art stock analysis tools to its users. This includes up-to-date performance metrics from trusted sources, real-time tweet and news insights, and a recommender engine based on the stocks' historic data. An example of the insights:
+
+[![Insights Screenshot][insights-screenshot]](https://github.com/shridpant/stockie)
+
+If a registered `stock symbol` was entered as a search query, a request is made via yfinance for additional information. The user is, then, provided a link to a dynamically created company profile for additional insights. An example of the `company profile `: 
+
+[![Company Profile Screenshot][company-screenshot]](https://github.com/shridpant/stockie)
+
+The users may connect with one another to engage in relevant discussions. Each user maintains a public profile bearing public contact information. The users may search and visit each other's profiles to chat/email/phone. An example of this profile:
+
+[![Profile Screenshot][profile-screenshot]](https://github.com/shridpant/stockie)
+
+## Contributing
+
+This project welcomes contributions and suggestions. Feel free to fork this repository or submit your ideas through [issues](https://github.com/shridpant/stockie/issues).
 
 <!-- LICENSE -->
 ## License
 
-Distributed under the MIT License. See `LICENSE` for more information.
+Distributed under the MIT License. See [LICENSE](https://github.com/shridpant/stockie/blob/main/LICENSE) for more information.
 
 <!-- CONTACT -->
 ## Contact
 
-Shrid Pant - [LinkedIn](https://www.linkedin.com/in/shridpant/)
+Feel free to hmu on my [LinkedIn](https://www.linkedin.com/in/shridpant/)
 
 <!-- ACKNOWLEDGEMENTS -->
 ## Acknowledements
+
+Stockie wouldn't be possible without the following resources:
+
+* [Twitter](https://developer.twitter.com/en)
+* [yfinance](https://github.com/ranaroussi/yfinance)
+* [IEX](https://iextrading.com/developer)
+* [News API](https://newsapi.org/)
+* [CS50](https://cs50.harvard.edu/)
+* [Chart.js](https://www.chartjs.org/)
 * [Flask](https://flask.palletsprojects.com/en/1.1.x/)
 * [Jupyter Notebook](https://jupyter.org/)
 * [Bootstrap](https://getbootstrap.com)
@@ -72,3 +110,6 @@ Shrid Pant - [LinkedIn](https://www.linkedin.com/in/shridpant/)
 [linkedin-url]: https://www.linkedin.com/in/shridpant/
 [github-shield]: https://img.shields.io/github/followers/shridpant?style=social
 [product-screenshot]: static/readme/screenshot.PNG
+[insights-screenshot]: static/readme/insights-screenshot.PNG
+[company-screenshot]: static/readme/company-screenshot.PNG
+[profile-screenshot]: static/readme/profile-screenshot.PNG
