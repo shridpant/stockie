@@ -35,7 +35,7 @@ app.config["SECRET_KEY"] = "secretkey"
 # SocketIO
 socketio = SocketIO(app)
 # Configure CS50 Library to use SQLite database
-db = SQL("sqlite:///finance.db")
+db = SQL("sqlite:///src/finance.db")
 # Make sure API key is set
 keys = getKeys("key.json")
 # Connect to Twitter
