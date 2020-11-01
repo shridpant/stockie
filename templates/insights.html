@@ -3,68 +3,364 @@
 {% block title %}
     Index
 {% endblock %}
+{% block custom %}
+<style>
+.centering{
+    text-align: center;
+}
+</style>
+{% endblock %}
 
 {% block main %}
 
-<form role="search" action="/insights" method="post">
-    <div class="form-group">
-        <input autocomplete="off" autofocus class="form-control" name="phrase" placeholder="Search Phrase" type="text">
-        &nbsp;<input type="submit" name="submit" value="Search">
+<div class="card border-dark mb-3 text-center styled-table">
+    <div class="card-header">
+      <ul class="nav nav-tabs card-header-tabs"  id="insights-list" role="tablist">
+        <li class="nav-item">
+            {% if method == "POST" and display == "nlp" %}
+            <a class="nav-link active" href="#nlp" role="tab" aria-controls="nlp" aria-selected="true">Twitter & News</a>
+            {% elif method == "GET" %}
+            <a class="nav-link active" href="#nlp" role="tab" aria-controls="nlp" aria-selected="true">Twitter & News</a>
+            {% else %}
+            <a class="nav-link" href="#nlp" role="tab" aria-controls="nlp" aria-selected="false">Twitter & News</a>
+            {% endif %}
+        </li>
+        <li class="nav-item">
+            {% if method == "POST" and display == "company" %} 
+            <a class="nav-link active" href="#company" role="tab" aria-controls="company" aria-selected="true">Company Profile</a>
+            {% else %}
+            <a class="nav-link" href="#company" role="tab" aria-controls="company" aria-selected="false">Company Profile</a>
+            {% endif %}
+        </li>
+        <li class="nav-item">
+                <a class="nav-link" href="#prediction" role="tab" aria-controls="prediction" aria-selected="false">Predictions</a>
+        </li>
+      </ul>
     </div>
-</form>
-{% if method == "POST" %}
-    <br /><hr><br />
-    <h3>Results</h3><br />
-        {% if company != None %}
-                <p class="small text-center text-muted">Click to view a detailed profile for <a href="/company:{{ company[0]['symbol'] }}"><strong>{{ company[0]["longName"] }}</strong></a></p><br />
-        {% endif %}
-    <div class="container">
-        <div class="row"  style="text-align: left;">
-          <div class="col">
-              <img src="../static/Twitter_Logo_Blue.svg" height="30"><br /><br />
-            {% if tweets is defined %}
-                <dl class="center">
-                    {% for result in tweets %}
-                        <dt>{{ result[1] }}</dt>
-                        {% if result[0] > 0.0 %}
-                            <dd>
-                                <a href="{{ result[3] }}" target="_blank"><span style="color:green;">"{{ result[2] }}"</span></a>
-                            </dd>
-                        {% elif result[0] == 0.0 %}
-                            <dd>
-                                <a href="{{ result[3] }}" target="_blank"><span style="color:black;">"{{ result[2] }}"</span></a>
-                                </dd>
-                        {% else %}
-                            <dd>
-                                <a href="{{ result[3] }}" target="_blank"><span style="color:red;">"{{ result[2] }}"</span></a>
-                            </dd><br />
-                        {% endif %}
-                    {% endfor %}
-                </dl>
+    <div class="card-body text-dark">
+        <div class="tab-content mt-3">
+            {% if method == "POST" and display == "nlp" %}
+                <div class="tab-pane active" id="nlp" role="tabpanel" aria-labelledby="nlp-tab">
+            {% elif method == "GET" %}
+                <div class="tab-pane active" id="nlp" role="tabpanel" aria-labelledby="nlp-tab">
             {% else %}
-                <p>No results available for <em>"{{ search_phrase }}"</em>.</p>
+                <div class="tab-pane" id="nlp" role="tabpanel" aria-labelledby="nlp-tab">
             {% endif %}
-          </div>
-          <div class="col">
-            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-newspaper" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                <path fill-rule="evenodd" d="M0 2.5A1.5 1.5 0 0 1 1.5 1h11A1.5 1.5 0 0 1 14 2.5v10.528c0 .3-.05.654-.238.972h.738a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 1 1 0v9a1.5 1.5 0 0 1-1.5 1.5H1.497A1.497 1.497 0 0 1 0 13.5v-11zM12 14c.37 0 .654-.211.853-.441.092-.106.147-.279.147-.531V2.5a.5.5 0 0 0-.5-.5h-11a.5.5 0 0 0-.5.5v11c0 .278.223.5.497.5H12z"/>
-                <path d="M2 3h10v2H2V3zm0 3h4v3H2V6zm0 4h4v1H2v-1zm0 2h4v1H2v-1zm5-6h2v1H7V6zm3 0h2v1h-2V6zM7 8h2v1H7V8zm3 0h2v1h-2V8zm-3 2h2v1H7v-1zm3 0h2v1h-2v-1zm-3 2h2v1H7v-1zm3 0h2v1h-2v-1z"/>
-            </svg><br /><br />
-            {% if news is defined %}
-                {% for article in news %}
-                <dt><a href=' {{ article["url"] }}' target="_blank">{{ article["title"] }}</a></dt>
-                        <dd>{{ article["description"] }}</dd>
-                        <dd>By {{ article["source"]["name"] }} at {{ article["publishedAt"] }}</dd><br />
-                {% endfor %}
+                    <form role="search" action="/insights" method="post" style="text-align: center;">
+                        <div class="form-group">
+                            <input autocomplete="off" autofocus class="form-control" name="phrase" placeholder="Search Phrase" type="text">
+                            &nbsp;<input type="submit" name="submit" value="Search">
+                        </div>
+                    </form>
+                    {% if method == "POST" and display == "nlp" %}
+                        <p><br /><hr></p>
+                        <h3 style="text-align: center;">Results</h3>
+                            {% if company != None %}
+                                    <p class="small text-center text-muted">Click to view a detailed profile for <a href="/insights/{{ company[0]['symbol'] }}"><strong>{{ company[0]["longName"] }}</strong></a></p><br />
+                            {% endif %}
+                        <div class="container">
+                            <div class="row"  style="text-align: left;">
+                              <div class="col">
+                                  <img src="../static/Twitter_Logo_Blue.svg" height="30"><br /><br />
+                                {% if tweets is defined %}
+                                    <dl class="center">
+                                        {% for result in tweets %}
+                                            <dt>{{ result[1] }}</dt>
+                                            {% if result[0] > 0.0 %}
+                                                <dd>
+                                                    <a href="{{ result[3] }}" target="_blank"><span style="color:green;">"{{ result[2] }}"</span></a>
+                                                </dd>
+                                            {% elif result[0] == 0.0 %}
+                                                <dd>
+                                                    <a href="{{ result[3] }}" target="_blank"><span style="color:black;">"{{ result[2] }}"</span></a>
+                                                    </dd>
+                                            {% else %}
+                                                <dd>
+                                                    <a href="{{ result[3] }}" target="_blank"><span style="color:red;">"{{ result[2] }}"</span></a>
+                                                </dd><br />
+                                            {% endif %}
+                                        {% endfor %}
+                                    </dl>
+                                {% else %}
+                                    <p>No results available for <em>"{{ search_phrase }}"</em>.</p>
+                                {% endif %}
+                              </div>
+                              <div class="col">
+                                <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-newspaper" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" d="M0 2.5A1.5 1.5 0 0 1 1.5 1h11A1.5 1.5 0 0 1 14 2.5v10.528c0 .3-.05.654-.238.972h.738a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 1 1 0v9a1.5 1.5 0 0 1-1.5 1.5H1.497A1.497 1.497 0 0 1 0 13.5v-11zM12 14c.37 0 .654-.211.853-.441.092-.106.147-.279.147-.531V2.5a.5.5 0 0 0-.5-.5h-11a.5.5 0 0 0-.5.5v11c0 .278.223.5.497.5H12z"/>
+                                    <path d="M2 3h10v2H2V3zm0 3h4v3H2V6zm0 4h4v1H2v-1zm0 2h4v1H2v-1zm5-6h2v1H7V6zm3 0h2v1h-2V6zM7 8h2v1H7V8zm3 0h2v1h-2V8zm-3 2h2v1H7v-1zm3 0h2v1h-2v-1zm-3 2h2v1H7v-1zm3 0h2v1h-2v-1z"/>
+                                </svg><br /><br />
+                                {% if news is defined %}
+                                    {% for article in news %}
+                                    <dt><a href=' {{ article["url"] }}' target="_blank">{{ article["title"] }}</a></dt>
+                                            <dd>{{ article["description"] }}</dd>
+                                            <dd>By {{ article["source"]["name"] }} at {{ article["publishedAt"] }}</dd><br />
+                                    {% endfor %}
+                                {% else %}
+                                    <p>No results available for <em>"{{ search_phrase }}"</em>.</p>
+                                {% endif %}
+                              </div>
+                            </div>
+                        </div>
+                    {% endif %} 
+            </div>    
+            {% if method == "POST" and display == "company" %}               
+                <div class="tab-pane active" id="company" role="tabpanel" aria-labelledby="company-tab">
             {% else %}
-                <p>No results available for <em>"{{ search_phrase }}"</em>.</p>
+                <div class="tab-pane" id="company" role="tabpanel" aria-labelledby="company-tab">
             {% endif %}
-          </div>
+                <form role="search" action="/insights" method="post" style="text-align: center;">
+                    <div class="form-group">
+                        <input autocomplete="off" autofocus class="form-control" name="symbol" placeholder="Stock Symbol" type="text">
+                        &nbsp;<input type="submit" name="submit" value="Search">
+                    </div>
+                </form>
+                {% if method == "POST" and display == "company"%}
+                    <p><br /><hr></p>
+                    <div class="row">
+                        <div class="col-4" style="text-align: right;">
+                            <img src="{{ info[0]['logo_url'] }}" style="width: 40%;" alt="LOGO">
+                        </div>
+                        <div class="col-6" style="text-align: left;">
+                            <h1><a href="{{ info[0]['website'] }}" target="_blank">{{ info[0]["longName"] }}</a></h1>
+                            <p>{{ info[0]["address1"] }}, {{ info[0]["city"] }}, {{ info[0]["state"] }}, {{ info[0]["country"] }}.</p>
+                        </div>
+                    </div><br />
+
+                    <div class="row">
+                        <div class="col" style="align-content: center;">
+                                <div class="card-body text-dark">
+                                <p class="card-text">
+                                    <div class="row">
+                                        <div class='col'>
+                                        <h3>Valuation Measures</h3>
+                                        <table class="styled-table center">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Market Capitalization</td>
+                                                    <td>{{ info[0]["marketCap"] }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>PEG Ratio</td>
+                                                    <td>{{ info[0]["pegRatio"] }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Payout Ratio</td>
+                                                    <td>{{ info[0]["payoutRatio"] }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Enterprise To Revenue</td>
+                                                    <td>{{ info[0]["enterpriseToRevenue"] }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Price/Book(mrq)</td>
+                                                    <td>{{ info[0]["priceToBook"] }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Price/Sales(ttm)</td>
+                                                    <td>{{ info[0]["priceToSalesTrailing12Months"] }}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="col">
+                                        <h3>Profile</h3>
+                                        <table class="styled-table center">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Sector(s)</td>
+                                                    <td>{{ info[0]["sector"] }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Industry</td>
+                                                    <td>{{ info[0]["industry"] }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Stock Symbol</td>
+                                                    <td>{{ info[0]["symbol"] }}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <h3>Financial Highlights</h3>
+                                            <h5>Profitability & Growth</h5>
+                                            <table class="styled-table center">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Profit Margin</td>
+                                                        <td>{{ info[0]["profitMargins"] }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Earnings' Quarterly Growth</td>
+                                                        <td>{{ info[0]["earningsQuarterlyGrowth"] }}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+
+                                            <h5>Regular Market</h5>
+                                            <table class="styled-table center">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Regular Market Price</td>
+                                                        <td>{{ info[0]["regularMarketPrice"] }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Regular Market Open</td>
+                                                        <td>{{ info[0]["regularMarketOpen"] }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Regular Market Day Low</td>
+                                                        <td>{{ info[0]["regularMarketDayLow"] }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Regular Market Day High</td>
+                                                        <td>{{ info[0]["regularMarketDayHigh"] }}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="col">
+                                            <h3>Trading Information</h3>
+                                            <h5>Stock Price History</h5>
+                                            <table class="styled-table center">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Open</td>
+                                                        <td>{{ info[0]["open"] }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Previous Close</td>
+                                                        <td>{{ info[0]["previousClose"] }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Fifth Day Average</td>
+                                                        <td>{{ info[0]["fiftyDayAverage"] }}</td>
+                                                    </tr>   
+                                                    <tr>
+                                                        <td>Fifty Two Week High</td>
+                                                        <td>{{ info[0]["fiftyTwoWeekHigh"] }}</td>
+                                                    </tr>  
+                                                    <tr>
+                                                        <td>Fifty Two Week Low</td>
+                                                        <td>{{ info[0]["fiftyTwoWeekLow"] }}</td>
+                                                    </tr> 
+                                                    <tr>
+                                                        <td>Fifty Two Week Change</td>
+                                                        <td>{{ info[0]["52WeekChange"] }}</td>
+                                                    </tr>                            
+                                                </tbody>
+                                            </table>
+
+                                            <h5>Dividents</h5>
+                                            <table class="styled-table center">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Divident Rate</td>
+                                                        <td>{{ info[0]["dividendRate"] }}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div><br />
+                                    <div class="row">
+                                        <div class="col">
+                                            <h3>Chart</h3>
+                                        <canvas id="myChart" class="styled-table"></canvas>
+                                        </div>
+                                    </div><br />
+                                </div>
+                            </div>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="tab-pane" id="prediction" role="tabpanel" aria-labelledby="prediction-tab" aria-selected="false">     
+                <h1>Predictions</h1>       
+            </div>
         </div>
-        
-<br /> 
-<hr>
+  </div>
+</div>
+
+
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/popper.min.js'></script>
+<script src='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js'></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+{% if method == "POST" and display == "company"%}
+    <script>
+        var ctx = document.getElementById('myChart').getContext('2d');
+        var myLineChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: Array({{open}}.length).map((x) => x),
+                datasets: [{
+                    label: 'Open',
+                    data: {{open}},
+                    borderColor: "#3e95cd",
+                    backgroundColor: "#3e95cd",
+                    pointRadius: 0,
+                    fill: false
+                },{
+                    label: 'Close',
+                    data: {{close}},
+                    hidden: true,
+                    borderColor: "#c45850",
+                    backgroundColor: "#c45850",
+                    pointRadius: 0,
+                    fill: false
+                },{
+                    label: 'High',
+                    data: {{high}},
+                    hidden: true,
+                    borderColor: "#8e5ea2",
+                    pointRadius: 0,
+                    fill: false
+                },{
+                    label: 'Low',
+                    data: {{low}},
+                    hidden: true,
+                    borderColor: "#3cba9f",
+                    pointRadius: 0,
+                    fill: false,
+                }]
+                },
+            options: {
+                layout: {
+                padding: {
+                    left: 50,
+                    right: 50,
+                    top: 50,
+                    bottom: 50
+                }
+            },
+                legend: {
+                    display: true,
+                    position: 'bottom'
+                },
+                title: {
+                position: 'top',
+                display: true,
+                text: "{{ info[0]['longName'] }}'s stock performance over the last 1 year"
+                },
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+    </script>
 {% endif %}
+<script>
+$('#insights-list a').on('click', function (e) {
+e.preventDefault()
+$(this).tab('show')
+})
+</script>
 
 {% endblock %}
 

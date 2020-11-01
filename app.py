@@ -8,7 +8,7 @@ from werkzeug.utils import secure_filename
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from src.helpers import newsapi, apology, login_required, lookup, usd, getKeys
+from src.helpers import newsapi, apology, login_required, lookup, usd, getKeys, UserInfo
 from src import twitter
 from src.performance import PreInfo, Information, Sustainability
 
@@ -40,10 +40,6 @@ db = SQL("sqlite:///src/finance.db")
 keys = getKeys("key.json")
 # Connect to Twitter
 twitterAPI = twitter.init(keys)
-
-def UserInfo():
-    user_id_info = db.execute("SELECT * FROM users WHERE id = :id", id = session["user_id"])
-    return user_id_info
 
 @app.route("/", methods=["GET", "POST"])
 @login_required
@@ -77,16 +73,29 @@ def index():
         else:
             return apology(symbol + " is an invalid symbol")
 
-@app.route("/insights", methods=["GET", "POST"])
+@app.route("/insights", defaults={'stock_symbol': None}, methods=["GET", "POST"])
+@app.route("/insights/<stock_symbol>", methods=["GET", "POST"])
 @login_required
-def insights():
+def insights(stock_symbol=None):
     if request.method == "GET":
-        return render_template("insights.html", method="GET")
+        if stock_symbol != None:
+            informationInsights = Information(stock_symbol)
+            if informationInsights != None:
+                open_df = informationInsights[1]["Open"].tolist()
+                close_df = informationInsights[1]["Close"].tolist()
+                high_df = informationInsights[1]["High"].tolist()
+                low_df = informationInsights[1]["Low"].tolist()
+                return render_template("insights.html", method="POST", display="company", info=informationInsights, open=open_df, close=close_df, high=high_df, low=low_df)
+            else:
+                return apology("Not found", 404)
+        else: 
+            return render_template("insights.html", method="GET")
     else:
         search_phrase = request.form.get("phrase")
-        if not search_phrase:
-            return apology("You must enter a search phrase")
-        else:
+        stock_symbol = request.form.get("symbol")
+        if stock_symbol:
+            return redirect("/insights/" + stock_symbol)
+        elif search_phrase:
             #TODO Better analysis methods
             try:
                 yfinanceInsights = PreInfo(search_phrase)
@@ -95,28 +104,17 @@ def insights():
                 tweetInsights = twitter.sentiment(twitterAPI, 7, search_phrase)
                 newsInsights = newsapi(search_phrase)
                 if len(tweetInsights) == 0 and len(newsInsights) == 0:
-                    return render_template("insights.html", method="POST", search_phrase=search_phrase, company = yfinanceInsights)
+                    return render_template("insights.html", method="POST", display="nlp", search_phrase=search_phrase, company = yfinanceInsights)
                 elif len(tweetInsights) == 0:
-                    return render_template("insights.html", method="POST", news=newsInsights, search_phrase=search_phrase, company = yfinanceInsights)
+                    return render_template("insights.html", method="POST", display="nlp", news=newsInsights, search_phrase=search_phrase, company = yfinanceInsights)
                 elif len(newsInsights) == 0:
-                    return render_template("insights.html", method = "POST", tweets = tweetInsights, search_phrase=search_phrase, company = yfinanceInsights)
+                    return render_template("insights.html", method = "POST", display="nlp", tweets = tweetInsights, search_phrase=search_phrase, company = yfinanceInsights)
                 else:
-                    return render_template("insights.html", method = "POST", tweets = tweetInsights, news=newsInsights, company = yfinanceInsights)
+                    return render_template("insights.html", method = "POST", display="nlp", tweets = tweetInsights, news=newsInsights, company = yfinanceInsights)
             except Exception as inst:
                 return apology(str(inst))
-
-#TODO Company Profile
-@app.route("/company:<string:company_name>")
-def company(company_name):
-    informationInsights = Information(company_name)
-    open_df = informationInsights[1]["Open"].tolist()
-    close_df = informationInsights[1]["Close"].tolist()
-    high_df = informationInsights[1]["High"].tolist()
-    low_df = informationInsights[1]["Low"].tolist()
-    if informationInsights != None:
-        return render_template("company.html", info=informationInsights, open=open_df, close=close_df, high=high_df, low=low_df)
-    else:
-        return apology("Not found", 404)
+        else:
+            return apology("Unknown error")
 
 @app.route("/buy", methods=["GET", "POST"])
 @login_required

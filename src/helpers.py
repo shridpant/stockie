@@ -2,9 +2,15 @@ import os
 import json
 import requests
 import urllib.parse
+from cs50 import SQL
 
 from flask import redirect, render_template, request, session
 from functools import wraps
+
+def UserInfo():
+    db = SQL("sqlite:///src/finance.db")
+    user_id_info = db.execute("SELECT * FROM users WHERE id = :id", id = session["user_id"])
+    return user_id_info
 
 def getKeys(file_path):
     global keys
