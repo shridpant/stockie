@@ -7,6 +7,8 @@ from cs50 import SQL
 from flask import redirect, render_template, request, session
 from functools import wraps
 
+from src import meme
+
 def UserInfo():
     db = SQL("sqlite:///src/finance.db")
     user_id_info = db.execute("SELECT * FROM users WHERE id = :id", id = session["user_id"])
@@ -22,12 +24,8 @@ def getKeys(file_path):
     return keys
 
 def apology(message, code=400):
-    def escape(s):
-        for old, new in [("-", "--"), (" ", "-"), ("_", "__"), ("?", "~q"),
-                         ("%", "~p"), ("#", "~h"), ("/", "~s"), ("\"", "''")]:
-            s = s.replace(old, new)
-        return s
-    return render_template("apology.html", top=code, bottom=escape(message)), code
+    meme.meme(message)
+    return render_template("apology.html")
 
 
 def login_required(f):
