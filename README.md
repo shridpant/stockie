@@ -1,25 +1,30 @@
-![github-shield]
-[![LinkedIn][linkedin-shield]][linkedin-url]
+[![Pull][pr]][pr-url]
 [![Issues][issues]][issues-url]
+[![Size][repo]][repo-url]
+[![Last][last]][last-url]
+[![Contributors][contributors]][contributors-url]
 [![License][license-shield]][license-url]
+[![LinkedIn][linkedin-shield]][linkedin-url]
+![github-shield]
 
 <br />
 <p align="center">
   <a href="https://github.com/shridpant/stockie">
     <img src="static/readme/title_icon.png" alt="Logo" width="200" height="75">
   </a>
-  
   <h3 align="center">Stockie</h3>
-
   <p align="center">
     Welcome to the GitHub repository of Stokie!
     <br />
     <a href="https://github.com/shridpant/stockie/blob/main/README.md"><strong>Explore the docs »</strong></a>
     <br />
-    <br />
-    <a href="https://github.com/shridpant/stockie/issues">Report Bug</a>
+    ·
+    <a href="https://github.com/shridpant/stockie/wiki">Wiki</a>
     ·
     <a href="https://github.com/shridpant/stockie/issues">Request Feature</a>
+    ·
+    <a href="https://github.com/shridpant/stockie/issues">Report Bug</a>
+    ·
   </p>
 </p>
 
@@ -53,18 +58,9 @@ The web interface is simple and easy to use. After a one-step registration proce
 
 1. Clone this repository with git clone `https://github.com/shridpant/stockie`.
 2. Navigate to the root folder of the project and execute `pip install -r requirements.txt` to install all dependencies.
-3. Author _keys.json_ on the root folder of the project with relevant keys from _IEX_, _News API_ and _Twitter_. Follow the format:
-> {
->    "IEX" : "",
->    "CONSUMER_KEY" : "",
->    "CONSUMER_SECRET" : "",
->    "ACCESS_KEY" : "",
->    "ACCESS_SECRET" : "",
->    "news" : ""
->}
+3. Author _keys.json_ on the root folder of the project with relevant keys from _IEX_, _News API_ and _Twitter_. Learn more about _keys.json_ [here](https://github.com/shridpant/stockie/wiki/Get-Keys).
 4. Start your server with `python app.py`.
 5. Open the address from your terminal on your browser. And you're all set!
-
 ## Features
 
 Stockie provides state-of-the-art *stock analysis tools* to its users. This includes up-to-date performance metrics from trusted sources, real-time tweet and news insights, and a recommender engine based on the stocks' historic data. An example of the insights:
@@ -81,7 +77,7 @@ The users may connect with one another to engage in relevant discussions. Each u
 
 ## Contributing
 
-This project welcomes contributions and suggestions. Feel free to fork this repository or submit your ideas through [issues](https://github.com/shridpant/stockie/issues).
+This project welcomes contributions and suggestions. Feel free to fork this repository or submit your ideas through [issues](https://github.com/shridpant/stockie/issues). Please carefully read and follow the [Contributor Covenant Code of Conduct](https://github.com/shridpant/stockie/blob/main/CODE_OF_CONDUCT.md) while participating in this project.
 
 <!-- LICENSE -->
 ## License
@@ -112,6 +108,14 @@ Stockie wouldn't be possible without the following resources:
 * [Img Shields](https://shields.io)
 
 <!-- MARKDOWN LINKS & IMAGES -->
+[pr]: https://img.shields.io/github/issues-pr/shridpant/stockie
+[pr-url]: https://github.com/shridpant/stockie/pulls
+[repo]: https://img.shields.io/github/repo-size/shridpant/stockie
+[repo-url]: https://github.com/shridpant/stockie
+[last]: https://img.shields.io/github/last-commit/shridpant/stockie
+[last-url]: https://github.com/shridpant/stockie/commits/main
+[contributors]: https://img.shields.io/github/contributors/shridpant/stockie
+[contributors-url]: https://github.com/shridpant/stockie/graphs/contributors
 [issues]: https://img.shields.io/github/issues-raw/shridpant/stockie
 [issues-url]: https://github.com/shridpant/stockie/issues
 [license-shield]: https://img.shields.io/apm/l/vim-mode

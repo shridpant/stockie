@@ -25,6 +25,7 @@ import json
 import requests
 import urllib.parse
 from cs50 import SQL
+import random
 
 from flask import redirect, render_template, request, session
 from functools import wraps
@@ -47,8 +48,7 @@ def getKeys(file_path):
 
 def apology(message, code=400):
     meme.meme(message)
-    return render_template("apology.html")
-
+    return render_template("apology.html", random=random.randint(1, 32500))
 
 def login_required(f):
     @wraps(f)
