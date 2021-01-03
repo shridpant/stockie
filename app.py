@@ -23,7 +23,6 @@
 import os
 from cs50 import SQL
 from flask import Flask, flash, jsonify, redirect, render_template, request, session
-from flask_socketio import SocketIO, send, emit
 from flask_session import Session
 from tempfile import mkdtemp
 from werkzeug.utils import secure_filename
@@ -39,12 +38,6 @@ app = Flask(__name__)
 # Ensure templates are auto-reloaded
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 # Ensure responses aren't cached
-@app.after_request
-def after_request(response):
-    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
-    response.headers["Expires"] = 0
-    response.headers["Pragma"] = "no-cache"
-    return response
 # Custom filter
 app.jinja_env.filters["usd"] = usd
 # Configure session to use filesystem (instead of signed cookies)
@@ -55,7 +48,6 @@ Session(app)
 # Secret key for chat
 app.config["SECRET_KEY"] = "secretkey"
 # SocketIO
-socketio = SocketIO(app)
 # Configure CS50 Library to use SQLite database
 db = SQL("sqlite:///src/finance.db")
 # Make sure API key is set
@@ -308,16 +300,17 @@ def register():
         # Insert the username and hash onto the SQL database
         try:
             tablename = username+"History"
-            db.execute("INSERT INTO users (username, hash) VALUES (:username, :hash)", username=username, hash=generate_password_hash(password))
-            db.execute("CREATE TABLE IF NOT EXISTS :username ('symbol' TEXT NOT NULL PRIMARY KEY, 'number' NUMERIC NOT NULL)", username=username)
-            db.execute("CREATE TABLE IF NOT EXISTS :tablename ('transaction' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,'symbol' TEXT NOT NULL,'number' NUMERIC NOT NULL, 'price' NUMERIC NOT NULL, 'timestamp' DATETIME DEFAULT CURRENT_TIMESTAMP, 'nature' TEXT DEFAULT 'na')", tablename=tablename)
-            return redirect("/")
+            table_existence = db.execute("SELECT name FROM sqlite_master WHERE type='table' AND name=:tablename;", tablename=tablename)
+            if table_existence == None:
+                db.execute("INSERT INTO users (username, hash) VALUES (:username, :hash)", username=username, hash=generate_password_hash(password))
+                db.execute("CREATE TABLE IF NOT EXISTS :username ('symbol' TEXT NOT NULL PRIMARY KEY, 'number' NUMERIC NOT NULL)", username=username)
+                db.execute("CREATE TABLE IF NOT EXISTS :tablename ('transaction' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,'symbol' TEXT NOT NULL,'number' NUMERIC NOT NULL, 'price' NUMERIC NOT NULL, 'timestamp' DATETIME DEFAULT CURRENT_TIMESTAMP, 'nature' TEXT DEFAULT 'na')", tablename=tablename)
+                return redirect("/")
+            else:
+                return apology("Username already taken")
         # Check for error
         except Exception as inst:
-            if "unique constraint failed" in str(inst).lower():
-                return apology("Username already taken")
-            else:
-                return apology(str(inst))
+            return apology(str(inst))
 
 """
 @app.route("/chat", methods=["GET", "POST"])
@@ -345,4 +338,4 @@ for code in default_exceptions:
     app.errorhandler(code)(errorhandler)
 
 if __name__ == "__main__":
-    socketio.run(app, debug=True)
+    app.run(debug=True)
