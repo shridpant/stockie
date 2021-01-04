@@ -41,10 +41,10 @@ def getKeys(file_path):
     global keys
     try:
         file_opened = open("keys.json", "r")
+        keys = json.load(file_opened)
+        return keys
     except:
         return apology("File for keys not found")
-    keys = json.load(file_opened)
-    return keys
 
 def apology(message, code=400):
     meme.meme(message)
@@ -86,7 +86,3 @@ def lookup(symbol):
         }
     except (KeyError, TypeError, ValueError):
         return None
-
-
-def usd(value):
-    return f"${value:,.2f}"

@@ -46,7 +46,7 @@
             {% else %}
                 <div class="tab-pane" id="nlp" role="tabpanel" aria-labelledby="nlp-tab">
             {% endif %}
-                    <form role="search" action="/insights" method="post" style="text-align: center;">
+                    <form role="search" action="/insights/" method="post" style="text-align: center;">
                         <div class="form-group">
                             <input autocomplete="off" autofocus class="form-control" name="phrase" placeholder="Search Phrase" type="text">
                             &nbsp;<input type="submit" name="submit" value="Search">
@@ -56,7 +56,7 @@
                         <p><br /><hr></p>
                         <h3 style="text-align: center;">Results</h3>
                             {% if company != None %}
-                                    <p class="small text-center text-muted">Click to view a detailed profile for <a href="/insights/{{ company[0]['symbol'] }}"><strong>{{ company[0]["longName"] }}</strong></a></p><br />
+                                    <p class="small text-center text-muted">Click to view a detailed profile for <a href="/insights/{{ company[0]['symbol'] }}/"><strong>{{ company[0]["longName"] }}</strong></a></p><br />
                             {% endif %}
                         <div class="container">
                             <div class="row"  style="text-align: left;">
@@ -109,7 +109,7 @@
             {% else %}
                 <div class="tab-pane" id="company" role="tabpanel" aria-labelledby="company-tab">
             {% endif %}
-                <form role="search" action="/insights" method="post" style="text-align: center;">
+                <form role="search" action="/insights/" method="post" style="text-align: center;">
                     <div class="form-group">
                         <input autocomplete="off" autofocus class="form-control" name="symbol" placeholder="Stock Symbol" type="text">
                         &nbsp;<input type="submit" name="submit" value="Search">

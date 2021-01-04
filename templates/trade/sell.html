@@ -6,7 +6,7 @@
 
 {% block main %}
 {% if stock_list is defined %}
-    <form action="/sell" method="post">
+    <form action="/trade/sell" method="post">
         <div class="form-group">
             <select autofocus class="form-control" name="symbol">
             {% for stock in stock_list %}

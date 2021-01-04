@@ -71,7 +71,7 @@
                         <div class="row">
                             <div class="col-4" style="text-align: right;">
                                 <img src="{{ dp }}" style="max-width:60%; max-height:auto" alt="Profile Picture"><br /><br />
-                                <form action="/profile" method="post" enctype="multipart/form-data">
+                                <form action="/profile/" method="post" enctype="multipart/form-data">
                                     <p>
                                         <input class="input_dp" type="file" name="dp_upload"><input class="input_dp" name="dp_submit" type="submit" value="Upload">
                                     </p>
@@ -79,7 +79,7 @@
                             </div>
                             <div class="col-6" style="text-align: left;">
                                 <div class="form-group">
-                                    <form action="/profile" method="POST">
+                                    <form action="/profile/" method="POST">
                                         Bio: <input class="input_bio form-control" name="bio" type="search" value='{{ userInfo["bio"] }}'' maxlength="20"><br />
                                         Email: <input class="input_bio form-control" name="email" type="email" value='{{ userInfo["email"] }}' maxlength="40"><br />
                                         Phone: <input class="input_bio form-control" name="phone" type="tel" pattern="[0-9]{3}[0-9]{4}[0-9]{3}" value='{{userInfo["phone"]}}'><br /><br />
@@ -95,7 +95,7 @@
                 {% else %}
                 <div class="tab-pane" id="search" role="tabpanel" aria-labelledby="search-tab">
                 {% endif %}
-                    <form role="search" action="/profile" method="post">
+                    <form role="search" action="/profile/" method="post">
                         <div class="form-group">
                             <input autocomplete="off" autofocus class="form-control" name="username" placeholder="User" type="text">
                             &nbsp;<input type="submit" name="submit" value="Find">
@@ -106,7 +106,7 @@
                         {% if results is defined %}
                             <dl class="center">
                                 {% for result in results %}
-                                    <dt><a href='/username:{{ result["username"] }}' target="_blank">{{ result["username"] }}</a></dt>
+                                    <dt><a href='/profile/user/{{ result["username"] }}' target="_blank">{{ result["username"] }}</a></dt>
                                     <dd>- {{ result["bio"] }}</dd>
                                 {% endfor %}
                             </dl>
