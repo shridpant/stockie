@@ -50,7 +50,7 @@ This repository contains the source code for *Stockie*- an investment portfolio 
 
 ### Built With
 
-The server-side application was built with Flask and Socket.IO. Other resources included SQLite3 for database management, and HTML, CSS and JavaScript for the client-side application. Stockie was made possible by [many](#acknowledements) open-sourced libraries and frameworks.
+The server-side application was built with Flask. Other resources included SQLite3 for database management, and HTML, CSS and JavaScript for the client-side application. Stockie was made possible by [many](#acknowledements) open-sourced libraries and frameworks.
 
 ### Usage
 

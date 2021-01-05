@@ -21,6 +21,7 @@
 # SOFTWARE.
 
 import os
+from flask import Flask
 from src.home import home
 from src.trade import trade
 from src.profile import profile
@@ -28,7 +29,6 @@ from src.insights import insights
 from src.register import register
 from flask_session import Session
 from src.helpers import apology, login_required, getKeys, UserInfo
-from flask import Flask, flash, jsonify, redirect, render_template, request, session
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 
 app = Flask(__name__)
