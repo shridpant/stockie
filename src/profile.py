@@ -36,9 +36,9 @@ def my_profile():
     userInfo = UserInfo()[0]
     dp = "static/dp/" + userInfo['username'] + "." + userInfo['dp']
     if not os.path.exists(dp):
-        dp = "../static/dp/"+"default.png"
+        dp = "../../static/dp/"+"default.png"
     else:
-        dp = "../static/dp/" + userInfo['username'] + "." + userInfo['dp']
+        dp = "../../static/dp/" + userInfo['username'] + "." + userInfo['dp']
     if request.method == "GET":
         return render_template("profiles/my_profile.html", userInfo=userInfo, dp=dp)
     else:
@@ -87,7 +87,7 @@ def target_profile(target_uname):
         return apology("User not found!", 404)
     dp = "static/dp/" + match[0]['username'] + "." + match[0]['dp']
     if not os.path.exists(dp):
-        dp = "../static/dp/"+"default.png"
+        dp = "../../static/dp/"+"default.png"
     else:
-        dp = "../static/dp/" + match[0]['username'] + "." + match[0]['dp']
+        dp = "../../static/dp/" + match[0]['username'] + "." + match[0]['dp']
     return render_template("profiles/target_profile.html", dp=dp, user=match[0])

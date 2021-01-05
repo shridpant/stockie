@@ -21,11 +21,9 @@
 # SOFTWARE.
 
 import os
-from cs50 import SQL
 from src.home import home
 from src.trade import trade
 from src.profile import profile
-from tempfile import mkdtemp
 from src.insights import insights
 from src.register import register
 from flask_session import Session
@@ -33,32 +31,24 @@ from src.helpers import apology, login_required, getKeys, UserInfo
 from flask import Flask, flash, jsonify, redirect, render_template, request, session
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 
-# Configure application
 app = Flask(__name__)
-# Register Blueprints
+app.config.from_object('config')
+
 app.register_blueprint(register, url_prefix="/register")
 app.register_blueprint(insights, url_prefix="/insights")
 app.register_blueprint(profile, url_prefix="/profile")
 app.register_blueprint(trade, url_prefix="/trade")
 app.register_blueprint(home, url_prefix="/")
 
-# Ensure templates are auto-reloaded
-app.config["TEMPLATES_AUTO_RELOAD"] = True
-# Configure session to use filesystem (instead of signed cookies)
-app.config["SESSION_FILE_DIR"] = mkdtemp()
-app.config["SESSION_PERMANENT"] = False
-app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
-# Handle the error
 def errorhandler(e):
     if not isinstance(e, HTTPException):
         e = InternalServerError()
     return apology(e.name, e.code)
 
-# Listen for errors
 for code in default_exceptions:
     app.errorhandler(code)(errorhandler)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
