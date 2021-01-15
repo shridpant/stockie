@@ -46,7 +46,7 @@
 
 [![Product Name Screenshot][product-screenshot]](https://github.com/shridpant/stockie)
 
-This repository contains the source code for *Stockie*- an investment portfolio management web application. The state-of-the-art recommendation engine provides real-time personalized insights for its users. Analysis of tweets, relevant news, the stocks' historic performances and many other parameters are evaluated for *the most up-to-date* insights.
+This repository contains the source code for *Stockie*- an investment portfolio management web application. The state-of-the-art analysis tools provide real-time insights for its users. Analysis of tweets, relevant news, the stocks' historic performances and many other parameters are evaluated for *the most up-to-date* insights.
 
 ### Built With
 
@@ -98,14 +98,16 @@ Stockie wouldn't be possible without the following resources:
 * [yfinance](https://github.com/ranaroussi/yfinance)
 * [IEX](https://iextrading.com/developer)
 * [News API](https://newsapi.org/)
-* [CS50](https://cs50.harvard.edu/)
 * [Chart.js](https://www.chartjs.org/)
 * [Flask](https://flask.palletsprojects.com/en/1.1.x/)
-* [Jupyter Notebook](https://jupyter.org/)
 * [Bootstrap](https://getbootstrap.com)
+* [CS50](https://cs50.harvard.edu/)
+* [Jupyter Notebook](https://jupyter.org/)
 * [JQuery](https://jquery.com)
 * [Google Fonts](https://fonts.google.com/)
 * [Img Shields](https://shields.io)
+* [Screely](https://www.screely.com/)
+* [Freepik from Flaticon.com](https://www.flaticon.com/authors/freepik)
 
 <!-- MARKDOWN LINKS & IMAGES -->
 [pr]: https://img.shields.io/github/issues-pr/shridpant/stockie
@@ -123,7 +125,7 @@ Stockie wouldn't be possible without the following resources:
 [linkedin-shield]: static/readme/linkedin.svg
 [linkedin-url]: https://www.linkedin.com/in/shridpant/
 [github-shield]: https://img.shields.io/github/followers/shridpant?style=social
-[product-screenshot]: static/readme/screenshot.PNG
-[insights-screenshot]: static/readme/insights-screenshot.PNG
+[product-screenshot]: static/readme/screenshot.png
+[insights-screenshot]: static/readme/insights-screenshot.png
 [company-screenshot]: static/readme/company-screenshot.png
-[profile-screenshot]: static/readme/profile-screenshot.PNG
+[profile-screenshot]: static/readme/profile-screenshot.png

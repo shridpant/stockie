@@ -28,7 +28,7 @@ from src.profile import profile
 from src.insights import insights
 from src.register import register
 from flask_session import Session
-from src.helpers import apology, login_required, getKeys, UserInfo
+from src.helpers import apology
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 
 app = Flask(__name__)
