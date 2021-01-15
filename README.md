@@ -125,7 +125,7 @@ Stockie wouldn't be possible without the following resources:
 [linkedin-shield]: static/readme/linkedin.svg
 [linkedin-url]: https://www.linkedin.com/in/shridpant/
 [github-shield]: https://img.shields.io/github/followers/shridpant?style=social
-[product-screenshot]: static/readme/screenshot.png
-[insights-screenshot]: static/readme/insights-screenshot.png
+[product-screenshot]: static/readme/screenshot.PNG
+[insights-screenshot]: static/readme/insights-screenshot.PNG
 [company-screenshot]: static/readme/company-screenshot.png
-[profile-screenshot]: static/readme/profile-screenshot.png
+[profile-screenshot]: static/readme/profile-screenshot.PNG
