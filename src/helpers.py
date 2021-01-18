@@ -46,7 +46,7 @@ def getKeys(file_path):
     except:
         return apology("File for keys not found")
 
-def apology(message, code=400):
+def apology(message, code=None):
     meme.meme(message)
     return render_template("apology.html", random=random.randint(1, 32500))
 

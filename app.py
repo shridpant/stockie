@@ -20,16 +20,16 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import os
 from flask import Flask
 from src.home import home
 from src.trade import trade
 from src.profile import profile
+from src.helpers import apology
 from src.insights import insights
 from src.register import register
 from flask_session import Session
-from src.helpers import apology
-from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
+from src.utils.utils import ErrorHandler
+from werkzeug.exceptions import HTTPException, InternalServerError
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -42,13 +42,11 @@ app.register_blueprint(home, url_prefix="/")
 
 Session(app)
 
+@app.errorhandler(Exception)
 def errorhandler(e):
     if not isinstance(e, HTTPException):
         e = InternalServerError()
     return apology(e.name, e.code)
-
-for code in default_exceptions:
-    app.errorhandler(code)(errorhandler)
 
 if __name__ == "__main__":
     app.run()
